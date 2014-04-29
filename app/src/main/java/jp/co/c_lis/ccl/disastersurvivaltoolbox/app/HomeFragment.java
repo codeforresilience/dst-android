@@ -1,12 +1,22 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
+
 public class HomeFragment<T extends HomeFragment.Listener> extends AbsFragment {
+
+    private ListView mHistoryView;
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -16,15 +26,58 @@ public class HomeFragment<T extends HomeFragment.Listener> extends AbsFragment {
     }
 
     public HomeFragment() {
+        mHistoryAdapter = new HistoryAdapter();
     }
+
+    private final List<History> mHistoryList = new ArrayList<History>();
+
+    private class HistoryAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return mHistoryList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return mHistoryList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return mHistoryList.get(position).getId();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = View.inflate(getActivity(), R.layout.article_row, null);
+            }
+
+            History history = (History)getItem(position);
+            TextView title = (TextView) convertView.findViewById(R.id.tv_title);
+            title.setText(history.getAbstraction());
+            return convertView;
+        }
+    }
+
+    private HistoryAdapter mHistoryAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        textView.setText(getTitle());
+        mHistoryView = (ListView) rootView.findViewById(R.id.lv_main);
+        mHistoryView.setAdapter(mHistoryAdapter);
+
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        History.loadDummy(mHistoryList);
+        mHistoryAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -6,8 +6,7 @@
         android:icon="@android:drawable/ic_input_add"
         android:title="Add"
         app:showAsAction="ifRoom" />
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
+    <item android:id="@+id/action_example"
+        android:title="Search"
+        app:showAsAction="withText|ifRoom" />
 </menu>
