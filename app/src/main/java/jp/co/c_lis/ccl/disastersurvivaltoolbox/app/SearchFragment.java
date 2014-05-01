@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class SearchFragment<T extends SearchFragment.Listener> extends AbsFragment {
+public class SearchFragment extends AbsFragment<SearchFragmentListener> {
 
     public static SearchFragment newInstance() {
         SearchFragment fragment = new SearchFragment();
@@ -35,9 +35,6 @@ public class SearchFragment<T extends SearchFragment.Listener> extends AbsFragme
     @Override
     public int getMenuId() {
         return R.menu.search;
-    }
-
-    public interface Listener extends IFragmentListener {
     }
 
 }

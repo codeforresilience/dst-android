@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,7 +15,7 @@ import java.util.List;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
 
-public class HomeFragment<T extends HomeFragment.Listener> extends AbsFragment {
+public class HomeFragment extends AbsFragment<HomeFragmentListener> implements AdapterView.OnItemClickListener {
 
     private ListView mHistoryView;
 
@@ -30,6 +31,15 @@ public class HomeFragment<T extends HomeFragment.Listener> extends AbsFragment {
     }
 
     private final List<History> mHistoryList = new ArrayList<History>();
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        History history = (History) mHistoryAdapter.getItem(position);
+        if (mListener != null) {
+            mListener.onHistorySelected(history);
+        }
+    }
 
     private class HistoryAdapter extends BaseAdapter {
 
@@ -54,7 +64,7 @@ public class HomeFragment<T extends HomeFragment.Listener> extends AbsFragment {
                 convertView = View.inflate(getActivity(), R.layout.article_row, null);
             }
 
-            History history = (History)getItem(position);
+            History history = (History) getItem(position);
             TextView title = (TextView) convertView.findViewById(R.id.tv_title);
             title.setText(history.getAbstraction());
             return convertView;
@@ -69,7 +79,7 @@ public class HomeFragment<T extends HomeFragment.Listener> extends AbsFragment {
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         mHistoryView = (ListView) rootView.findViewById(R.id.lv_main);
         mHistoryView.setAdapter(mHistoryAdapter);
-
+        mHistoryView.setOnItemClickListener(this);
         return rootView;
     }
 
@@ -90,6 +100,4 @@ public class HomeFragment<T extends HomeFragment.Listener> extends AbsFragment {
         return R.menu.home;
     }
 
-    public interface Listener extends IFragmentListener {
-    }
 }

@@ -1,13 +1,12 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
-import android.media.Image;
-
 import java.io.File;
+import java.io.Serializable;
 
 /**
  * 記事クラス.
  */
-public class Article {
+public class Article implements Serializable {
 
     private long id;
     private long parentId;

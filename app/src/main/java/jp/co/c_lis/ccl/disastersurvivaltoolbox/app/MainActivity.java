@@ -1,17 +1,23 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
+
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
-        HomeFragment.Listener, SearchFragment.Listener {
+        HomeFragmentListener,
+        SearchFragmentListener {
+    private static final String TAG = "MainActivity";
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -98,4 +104,13 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onHistorySelected(History history) {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "onHistorySelected " + history.getArticle().getId());
+        }
+        Intent intent = new Intent(this, ArticleViewActivity.class);
+        intent.putExtra(ArticleViewActivity.KEY_ARTICLE, history.getArticle());
+        startActivity(intent);
+    }
 }

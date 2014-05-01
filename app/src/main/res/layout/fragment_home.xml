@@ -3,4 +3,5 @@
     android:id="@+id/lv_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:dividerHeight="0dp"
     tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.MainActivity$PlaceholderFragment" />

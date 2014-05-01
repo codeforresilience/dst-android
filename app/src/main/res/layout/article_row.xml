@@ -16,8 +16,7 @@
         android:paddingLeft="16dp"
         android:paddingBottom="8dp"
         android:paddingRight="16dp"
-        android:background="#ffffff"
-        >
+        android:background="@drawable/bg_article_row">
 
         <TextView
             android:id="@+id/tv_title"

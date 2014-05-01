@@ -1,11 +1,12 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * 変更履歴クラス
  */
-public class History {
+public class History implements Serializable {
 
     private long time = System.currentTimeMillis();
 

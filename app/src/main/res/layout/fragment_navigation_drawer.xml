@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="#666666"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/iv_icon"
@@ -18,6 +18,7 @@
         android:layout_alignTop="@id/iv_icon"
         android:layout_alignBottom="@id/iv_icon"
         android:textSize="18sp"
+        android:textColor="@android:color/white"
         android:gravity="center_vertical"
         android:text="name" />
 
@@ -28,8 +29,7 @@
         android:choiceMode="singleChoice"
         android:layout_below="@id/iv_icon"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
-        android:background="#cccc"
+        android:background="#dd666666"
         tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.NavigationDrawerFragment" />
 
 </RelativeLayout>

@@ -8,7 +8,7 @@ public abstract class AbsFragment<T extends AbsFragment.IFragmentListener> exten
     public abstract CharSequence getTitle();
     public abstract int getMenuId();
 
-    private T mListener;
+    T mListener;
 
     @Override
     public void onAttach(Activity activity) {

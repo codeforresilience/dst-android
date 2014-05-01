@@ -1,8 +1,9 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
 import java.io.File;
+import java.io.Serializable;
 
-public class Author {
+public class Author implements Serializable {
 
     private long id;
     private String name;
@@ -33,7 +34,7 @@ public class Author {
     }
 
     public static Author getDummy(int id) {
-        switch(id) {
+        switch (id) {
             case 0:
                 Author author1 = new Author();
                 author1.setId(0);

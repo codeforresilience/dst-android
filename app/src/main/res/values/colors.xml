@@ -1,0 +1,4 @@
+<resources>
+    <color name="bg_article_row_normal">#ffffff</color>
+    <color name="bg_article_row_pressed">#eeeeee</color>
+</resources>
