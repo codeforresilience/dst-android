@@ -1,15 +1,18 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
 import android.app.Activity;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +70,15 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
             History history = (History) getItem(position);
             TextView title = (TextView) convertView.findViewById(R.id.tv_title);
             title.setText(history.getAbstraction());
+
+            ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
+            try {
+                thumbnail.setImageBitmap(BitmapFactory.decodeStream(
+                        getActivity().getAssets().open(history.getArticle().getImage())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return convertView;
         }
     }

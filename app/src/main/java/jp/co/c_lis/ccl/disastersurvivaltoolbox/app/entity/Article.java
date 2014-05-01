@@ -1,5 +1,7 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
+import android.os.Environment;
+
 import java.io.File;
 import java.io.Serializable;
 
@@ -14,7 +16,7 @@ public class Article implements Serializable {
     private String title;
     private Author author;
     private String abstaction;
-    private File image;
+    private String image;
 
     private Column[] columns;
 
@@ -62,11 +64,11 @@ public class Article implements Serializable {
         this.abstaction = abstaction;
     }
 
-    public File getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(File image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -96,10 +98,36 @@ public class Article implements Serializable {
 
     public static Article getDummy(Author author) {
         Article article = new Article();
+
         article.setId(0);
-        article.setAuthor(author);
         article.setTitle("簡易トイレ");
-        article.setAbstaction("水不足、停電などでトイレが使えない時に使える簡易トイレの作り方です。");
+        article.setImage("portable_toilet1.png");
+        article.setAbstaction("水不足、停電などでトイレが使えない時に使える簡易トイレの作り方です。\n" +
+                "（材料）\n" +
+                "・便器 or バケツなどの容器 1個\n" +
+                "・ビニール袋/買い物袋 ２枚\n" +
+                "・新聞紙 １，２枚\n" +
+                "・消毒液 必要に応じて調整");
+        article.setAuthor(author);
+
+        Column[] columns = new Column[3];
+
+        columns[0] = new Column();
+        columns[0].setTitle("Step1");
+        columns[0].setImage("portable_toilet1.png");
+        columns[0].setDescription("バケツにビニール袋を二重にし、一枚目の袋とバケツを固定");
+
+        columns[1] = new Column();
+        columns[1].setTitle("Step2");
+        columns[1].setImage("portable_toilet2.png");
+        columns[1].setDescription("くしゃくしゃにした新聞紙をバケツの中へ（水分を吸収するため）");
+
+        columns[2] = new Column();
+        columns[2].setTitle("Step3");
+        columns[2].setImage("portable_toilet3.png");
+        columns[2].setDescription("使用後は、消毒薬をスプレーなどをする");
+        article.setColumns(columns);
+
         return article;
     }
 
@@ -108,10 +136,10 @@ public class Article implements Serializable {
      * <p/>
      * 複数手順がある場合Stepに分けたり、バリエーションなどを記述することを想定している。
      */
-    public static class Column {
+    public static class Column implements Serializable {
 
         private String title;
-        private File image;
+        private String image;
         private String description;
 
         public String getTitle() {
@@ -122,12 +150,12 @@ public class Article implements Serializable {
             this.title = title;
         }
 
-        public File getImage() {
+        public String getImage() {
             return image;
         }
 
-        public void setImage(File image) {
-            this.image = image;
+        public void setImage(String fileName) {
+            this.image = fileName;
         }
 
         public String getDescription() {

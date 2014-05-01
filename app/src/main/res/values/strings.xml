@@ -8,6 +8,8 @@
     <string name="title_article">Article</string>
     <string name="title_signout">Signout</string>
 
+    <string name="summary">Summary</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
