@@ -44,17 +44,19 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
-
-        EditText keyword = (EditText) rootView.findViewById(R.id.et_keyword);
-        keyword.setOnEditorActionListener(this);
-
-        mDisasterTypeAdapter = new DisasterTypeAdapter();
-        GridView gridView = (GridView) rootView.findViewById(R.id.gv_disaster_types);
-        gridView.setAdapter(mDisasterTypeAdapter);
-
         ListView listView = (ListView) rootView.findViewById(R.id.lv_main);
         listView.setAdapter(mArticleAdapter);
         listView.setOnItemClickListener(this);
+
+        View headerView = inflater.inflate(R.layout.search_header, null);
+        EditText keyword = (EditText) headerView.findViewById(R.id.et_keyword);
+        keyword.setOnEditorActionListener(this);
+
+        mDisasterTypeAdapter = new DisasterTypeAdapter();
+        GridView gridView = (GridView) headerView.findViewById(R.id.gv_disaster_types);
+        gridView.setAdapter(mDisasterTypeAdapter);
+        listView.addHeaderView(headerView);
+
         return rootView;
     }
 
