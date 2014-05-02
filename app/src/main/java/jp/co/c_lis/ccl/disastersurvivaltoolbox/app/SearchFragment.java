@@ -40,13 +40,15 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
         mArticleAdapter = new ArticleAdapter();
     }
 
+    private ListView mListView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.lv_main);
-        listView.setAdapter(mArticleAdapter);
-        listView.setOnItemClickListener(this);
+        mListView = (ListView) rootView.findViewById(R.id.lv_main);
+        mListView.setAdapter(mArticleAdapter);
+        mListView.setOnItemClickListener(this);
 
         View headerView = inflater.inflate(R.layout.search_header, null);
         EditText keyword = (EditText) headerView.findViewById(R.id.et_keyword);
@@ -55,22 +57,16 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
         mDisasterTypeAdapter = new DisasterTypeAdapter();
         GridView gridView = (GridView) headerView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(mDisasterTypeAdapter);
-        listView.addHeaderView(headerView);
+        mListView.addHeaderView(headerView);
 
         return rootView;
     }
 
     private DisasterTypeAdapter mDisasterTypeAdapter;
 
-    private static final DisasterType[] DISASTER_TYPES = new DisasterType[]{
-            new DisasterType(R.drawable.disaster_type_earthquake, "地震", "Earthquake"),
-            new DisasterType(R.drawable.disaster_type_typhoon, "台風", "Typhoon"),
-            new DisasterType(R.drawable.disaster_type_snow, "大雪", "Snow"),
-    };
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Article article = (Article) mArticleAdapter.getItem(position);
+        Article article = (Article) mArticleAdapter.getItem(position - mListView.getHeaderViewsCount());
         if (mListener != null) {
             mListener.onArticleSelected(article);
         }
@@ -79,19 +75,19 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        search();
+        executeSearch();
     }
 
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-            search();
+            executeSearch();
             return true;
         }
         return false;
     }
 
-    private void search() {
+    public void executeSearch() {
         mArticleList.clear();
         Article.loadDummy(mArticleList);
         mArticleAdapter.notifyDataSetChanged();
@@ -101,12 +97,12 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
 
         @Override
         public int getCount() {
-            return DISASTER_TYPES.length;
+            return DisasterType.DISASTER_TYPES.length;
         }
 
         @Override
         public Object getItem(int position) {
-            return DISASTER_TYPES[position];
+            return DisasterType.DISASTER_TYPES[position];
         }
 
         @Override
@@ -166,6 +162,9 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            TextView likeCount = (TextView) convertView.findViewById(R.id.tv_like_count);
+            likeCount.setText(String.valueOf(article.getLikeCount()));
 
             return convertView;
         }

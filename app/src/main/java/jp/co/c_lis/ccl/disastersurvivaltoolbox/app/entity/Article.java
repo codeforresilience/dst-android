@@ -1,9 +1,7 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
-import android.os.Environment;
-
-import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +17,7 @@ public class Article implements Serializable {
     private String abstaction;
     private String image;
 
-    private Column[] columns;
+    private final List<Column> columns = new ArrayList<Column>();
 
     private int likeCount;
 
@@ -75,12 +73,8 @@ public class Article implements Serializable {
         this.image = image;
     }
 
-    public Column[] getColumns() {
+    public List<Column> getColumns() {
         return columns;
-    }
-
-    public void setColumns(Column[] columns) {
-        this.columns = columns;
     }
 
     public int getLikeCount() {
@@ -125,23 +119,23 @@ public class Article implements Serializable {
                 "・消毒液 必要に応じて調整");
         article.setAuthor(author);
 
-        Column[] columns = new Column[3];
+        Column column = new Column();
+        column.setTitle("Step1");
+        column.setImage("portable_toilet1.png");
+        column.setDescription("バケツにビニール袋を二重にし、一枚目の袋とバケツを固定");
+        article.columns.add(column);
 
-        columns[0] = new Column();
-        columns[0].setTitle("Step1");
-        columns[0].setImage("portable_toilet1.png");
-        columns[0].setDescription("バケツにビニール袋を二重にし、一枚目の袋とバケツを固定");
+        column = new Column();
+        column.setTitle("Step2");
+        column.setImage("portable_toilet2.png");
+        column.setDescription("くしゃくしゃにした新聞紙をバケツの中へ（水分を吸収するため）");
+        article.columns.add(column);
 
-        columns[1] = new Column();
-        columns[1].setTitle("Step2");
-        columns[1].setImage("portable_toilet2.png");
-        columns[1].setDescription("くしゃくしゃにした新聞紙をバケツの中へ（水分を吸収するため）");
-
-        columns[2] = new Column();
-        columns[2].setTitle("Step3");
-        columns[2].setImage("portable_toilet3.png");
-        columns[2].setDescription("使用後は、消毒薬をスプレーなどをする");
-        article.setColumns(columns);
+        column = new Column();
+        column.setTitle("Step3");
+        column.setImage("portable_toilet3.png");
+        column.setDescription("使用後は、消毒薬をスプレーなどをする");
+        article.columns.add(column);
 
         return article;
     }

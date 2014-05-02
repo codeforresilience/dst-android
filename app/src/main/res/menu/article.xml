@@ -5,16 +5,16 @@
     <item
         android:id="@+id/action_update"
         android:title="Update"
-        android:icon="@drawable/ic_update"
+        android:icon="@android:drawable/ic_input_add"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_replicate"
         android:title="Replicate"
-        android:icon="@drawable/ic_replicate"
-        app:showAsAction="ifRoom" />
+        android:icon="@android:drawable/ic_input_add"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_translate"
         android:title="Translate"
-        android:icon="@drawable/ic_translate"
-        app:showAsAction="ifRoom" />
+        android:icon="@android:drawable/ic_input_add"
+        app:showAsAction="always" />
 </menu>

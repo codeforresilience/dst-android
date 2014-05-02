@@ -79,6 +79,9 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
                 e.printStackTrace();
             }
 
+            TextView likeCount = (TextView) convertView.findViewById(R.id.tv_like_count);
+            likeCount.setText(String.valueOf(history.getArticle().getLikeCount()));
+
             return convertView;
         }
     }
