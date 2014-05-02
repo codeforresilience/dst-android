@@ -8,9 +8,16 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.MainActivity$PlaceholderFragment">
 
-    <TextView
-        android:id="@+id/tv_description"
-        android:layout_below="@id/tv_title"
+    <EditText
+        android:id="@+id/et_title"
+        android:hint="Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/et_description"
+        android:hint="Summary"
+        android:layout_below="@id/et_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -20,6 +20,10 @@
             android:name=".ArticleViewActivity"
             android:label="@string/app_name"
             android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".ArticleEditActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>

@@ -4,6 +4,7 @@ import android.os.Environment;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 記事クラス.
@@ -19,6 +20,8 @@ public class Article implements Serializable {
     private String image;
 
     private Column[] columns;
+
+    private int likeCount;
 
     private long created = System.currentTimeMillis();
 
@@ -80,6 +83,14 @@ public class Article implements Serializable {
         this.columns = columns;
     }
 
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
     public long getCreated() {
         return created;
     }
@@ -94,6 +105,10 @@ public class Article implements Serializable {
 
     public void setUpdated(long updated) {
         this.updated = updated;
+    }
+
+    public static void loadDummy(List<Article> out) {
+        out.add(getDummy(Author.getDummy(0)));
     }
 
     public static Article getDummy(Author author) {

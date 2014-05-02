@@ -8,10 +8,26 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.MainActivity$PlaceholderFragment">
 
-    <TextView
-        android:id="@+id/tv_description"
-        android:layout_below="@id/tv_title"
+    <EditText
+        android:id="@+id/et_title"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:hint="Title" />
+
+    <ImageButton
+        android:id="@+id/iv_image"
+        android:src="@android:drawable/ic_menu_camera"
+        android:layout_below="@id/et_title"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/et_description"
+        android:layout_below="@id/iv_image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Description" />
 
 </RelativeLayout>

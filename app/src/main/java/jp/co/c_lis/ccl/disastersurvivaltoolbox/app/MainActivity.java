@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
 
 public class MainActivity extends ActionBarActivity
@@ -94,12 +95,12 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_add) {
+            Intent intent = new Intent(this, ArticleEditActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -111,6 +112,16 @@ public class MainActivity extends ActionBarActivity
         }
         Intent intent = new Intent(this, ArticleViewActivity.class);
         intent.putExtra(ArticleViewActivity.KEY_ARTICLE, history.getArticle());
+        startActivity(intent);
+    }
+
+    @Override
+    public void onArticleSelected(Article article) {
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "onArticleSelected " + article.getId());
+        }
+        Intent intent = new Intent(this, ArticleViewActivity.class);
+        intent.putExtra(ArticleViewActivity.KEY_ARTICLE, article);
         startActivity(intent);
     }
 }

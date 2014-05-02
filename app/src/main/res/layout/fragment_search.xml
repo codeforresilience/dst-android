@@ -11,12 +11,16 @@
     <EditText
         android:id="@+id/et_keyword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:imeOptions="actionSearch"
+        android:singleLine="true"
+        android:hint="Keyword" />
 
     <GridView
         android:id="@+id/gv_disaster_types"
         android:layout_below="@id/et_keyword"
         android:numColumns="4"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -25,6 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/gv_disaster_types"
+        android:divider="@null"
         android:dividerHeight="0dp" />
 
 </RelativeLayout>

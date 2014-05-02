@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/disaster_type_earthquake_checked" />
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#aaffffff" />
+        </shape>
+    </item>
+
+</layer-list>

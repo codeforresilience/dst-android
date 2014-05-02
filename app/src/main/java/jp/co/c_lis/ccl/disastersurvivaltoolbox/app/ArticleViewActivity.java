@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,6 +31,8 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
         mArticle = (Article) getIntent().getSerializableExtra(KEY_ARTICLE);
 
         ActionBar ab = getSupportActionBar();
+        ab.setTitle(mArticle.getTitle());
+
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         ActionBar.Tab tab = ab.newTab()
@@ -51,6 +55,13 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
 
         setContentView(R.layout.activity_article);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = new MenuInflater(this);
+        menuInflater.inflate(R.menu.article, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -88,9 +99,6 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
                                  Bundle savedInstanceState) {
             Article article = (Article) getArguments().getSerializable(KEY_ARTICLE);
             View rootView = inflater.inflate(R.layout.fragment_summary, container, false);
-
-            TextView title = (TextView) rootView.findViewById(R.id.tv_title);
-            title.setText(article.getTitle());
 
             TextView abstraction = (TextView) rootView.findViewById(R.id.tv_description);
             abstraction.setText(article.getAbstaction());
