@@ -1,12 +1,16 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
 import java.io.File;
 import java.io.Serializable;
 
-public class Author implements Serializable {
+public class Author extends AbsData<Author> implements Serializable {
 
     private long id;
     private String name;
+    private String nameEn;
     private File image;
 
     public long getId() {
@@ -23,6 +27,14 @@ public class Author implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getNameEn() {
+        return nameEn;
+    }
+
+    public void setNameEn(String nameEn) {
+        this.nameEn = nameEn;
     }
 
     public File getImage() {
@@ -50,5 +62,43 @@ public class Author implements Serializable {
         }
 
         return null;
+    }
+
+    @Override
+    public String getTableName() {
+        return "authors";
+    }
+
+    @Override
+    public String[] getAllColumns() {
+        return new String[]{
+                "_id",
+                "name_ja",
+                "name_en",
+                "photo_filename",
+        };
+    }
+
+    @Override
+    public void write(ContentValues values) {
+        values.put("name_ja", name);
+        values.put("name_en", nameEn);
+
+        if (image != null) {
+            values.put("photo_filename", image.getAbsolutePath());
+        }
+    }
+
+    @Override
+    public void read(Cursor cursor) {
+        id = cursor.getLong(cursor.getColumnIndex("_id"));
+        name = cursor.getString(cursor.getColumnIndex("name_ja"));
+        nameEn = cursor.getString(cursor.getColumnIndex("name_en"));
+        image = new File(cursor.getString(cursor.getColumnIndex("photo_filename")));
+    }
+
+    @Override
+    Author getInstance() {
+        return new Author();
     }
 }

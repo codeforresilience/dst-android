@@ -1,7 +1,9 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
+import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,6 +70,7 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Article article = (Article) mArticleAdapter.getItem(position - mListView.getHeaderViewsCount());
         if (mListener != null) {
+            article.findById(article.getId(), mDb);
             mListener.onArticleSelected(article);
         }
 
@@ -89,20 +92,23 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
 
     public void executeSearch() {
         mArticleList.clear();
-        Article.loadDummy(mArticleList);
+
+        new Article().findAll(mDb, mArticleList);
         mArticleAdapter.notifyDataSetChanged();
     }
+
+    private List<DisasterType> mDisasterTypeList = new ArrayList<DisasterType>();
 
     private class DisasterTypeAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            return DisasterType.DISASTER_TYPES.length;
+            return mDisasterTypeList.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return DisasterType.DISASTER_TYPES[position];
+            return mDisasterTypeList.get(position);
         }
 
         @Override
@@ -153,14 +159,19 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
 
             Article article = (Article) getItem(position);
             TextView title = (TextView) convertView.findViewById(R.id.tv_title);
-            title.setText(article.getAbstaction());
+            title.setText(article.getTitle() + "\n" + article.getAbstaction());
 
             ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
-            try {
-                thumbnail.setImageBitmap(BitmapFactory.decodeStream(
-                        getActivity().getAssets().open(article.getImage())));
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (article.getImage() != null) {
+                thumbnail.setVisibility(View.VISIBLE);
+                try {
+                    thumbnail.setImageBitmap(BitmapFactory.decodeStream(
+                            getActivity().getAssets().open(article.getImage())));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                thumbnail.setVisibility(View.GONE);
             }
 
             TextView likeCount = (TextView) convertView.findViewById(R.id.tv_like_count);
@@ -182,4 +193,26 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
         return R.menu.search;
     }
 
+    private Handler mHandler = new Handler();
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        Thread th = new Thread() {
+            @Override
+            public void run() {
+                super.run();
+
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        new DisasterType().findAll(mDb, mDisasterTypeList);
+                        mDisasterTypeAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        };
+        th.start();
+    }
 }

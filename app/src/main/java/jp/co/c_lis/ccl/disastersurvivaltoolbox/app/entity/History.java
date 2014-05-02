@@ -83,38 +83,4 @@ public class History implements Serializable {
     public String getAbstraction() {
         return String.format("%s さんが、『%s』の記事を%sしました。", author.getName(), article.getTitle(), getTypeString());
     }
-
-    public static void loadDummy(List<History> out) {
-
-        History data;
-
-        data = new History();
-        data.setId(0);
-        data.setType(Type.Updated);
-        data.setAuthor(Author.getDummy(0));
-        data.setArticle(Article.getDummy(Author.getDummy(1)));
-        out.add(data);
-
-        data = new History();
-        data.setId(0);
-        data.setType(Type.Replicated);
-        data.setAuthor(Author.getDummy(0));
-        data.setArticle(Article.getDummy(Author.getDummy(1)));
-        out.add(data);
-
-        data = new History();
-        data.setId(0);
-        data.setType(Type.Translated);
-        data.setAuthor(Author.getDummy(1));
-        data.setArticle(Article.getDummy(Author.getDummy(1)));
-        out.add(data);
-
-        data = new History();
-        data.setId(0);
-        data.setType(Type.Translated);
-        data.setAuthor(Author.getDummy(1));
-        data.setArticle(Article.getDummy(Author.getDummy(1)));
-        out.add(data);
-
-    }
 }

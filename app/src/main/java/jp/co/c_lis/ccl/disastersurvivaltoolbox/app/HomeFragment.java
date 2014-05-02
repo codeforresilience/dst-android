@@ -101,8 +101,6 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        History.loadDummy(mHistoryList);
-        mHistoryAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -1,5 +1,9 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,10 +11,12 @@ import java.util.List;
 /**
  * 記事クラス.
  */
-public class Article implements Serializable {
+public class Article extends AbsData<Article> implements Serializable {
 
     private long id;
     private long parentId;
+
+    private final List<DisasterType> disasterTypes = new ArrayList<DisasterType>();
 
     private String title;
     private Author author;
@@ -39,6 +45,10 @@ public class Article implements Serializable {
 
     public void setParentId(long parentId) {
         this.parentId = parentId;
+    }
+
+    public List<DisasterType> getDisasterTypes() {
+        return disasterTypes;
     }
 
     public String getTitle() {
@@ -101,43 +111,88 @@ public class Article implements Serializable {
         this.updated = updated;
     }
 
-    public static void loadDummy(List<Article> out) {
-        out.add(getDummy(Author.getDummy(0)));
+    @Override
+    public String getTableName() {
+        return "articles";
     }
 
-    public static Article getDummy(Author author) {
-        Article article = new Article();
+    @Override
+    public String[] getAllColumns() {
+        return new String[]{
+                "_id",
+                "parent_id",
+                "title",
+                "author_id",
+                "abstaction",
+                "image_filename",
+                "like_count",
+                "created",
+                "updated",
+        };
+    }
 
-        article.setId(0);
-        article.setTitle("簡易トイレ");
-        article.setImage("portable_toilet1.png");
-        article.setAbstaction("水不足、停電などでトイレが使えない時に使える簡易トイレの作り方です。\n" +
-                "（材料）\n" +
-                "・便器 or バケツなどの容器 1個\n" +
-                "・ビニール袋/買い物袋 ２枚\n" +
-                "・新聞紙 １，２枚\n" +
-                "・消毒液 必要に応じて調整");
-        article.setAuthor(author);
+    @Override
+    public void write(ContentValues values) {
+        values.put("parent_id", parentId);
+        values.put("title", title);
+        values.put("author_id", author.getId());
+        values.put("abstaction", abstaction);
+        values.put("image_filename", image);
+        values.put("like_count", likeCount);
+        values.put("created", created);
+        values.put("updated", updated);
+    }
 
-        Column column = new Column();
-        column.setTitle("Step1");
-        column.setImage("portable_toilet1.png");
-        column.setDescription("バケツにビニール袋を二重にし、一枚目の袋とバケツを固定");
-        article.columns.add(column);
+    @Override
+    Article getInstance() {
+        return new Article();
+    }
 
-        column = new Column();
-        column.setTitle("Step2");
-        column.setImage("portable_toilet2.png");
-        column.setDescription("くしゃくしゃにした新聞紙をバケツの中へ（水分を吸収するため）");
-        article.columns.add(column);
+    @Override
+    public long insert(SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        write(values);
+        long id = db.insert(getTableName(), null, values);
 
-        column = new Column();
-        column.setTitle("Step3");
-        column.setImage("portable_toilet3.png");
-        column.setDescription("使用後は、消毒薬をスプレーなどをする");
-        article.columns.add(column);
+        for (Column column : columns) {
+            column.setArticleId(id);
+            column.insert(db);
+        }
 
-        return article;
+        for (DisasterType disasterType : disasterTypes) {
+            ArticleDisasterType obj = new ArticleDisasterType();
+            obj.setArticleId(id);
+            obj.setDisastertypeId(disasterType.getId());
+            obj.insert(db);
+        }
+
+        return id;
+    }
+
+    @Override
+    public void read(Cursor cursor) {
+        id = cursor.getLong(cursor.getColumnIndex("_id"));
+        parentId = cursor.getLong(cursor.getColumnIndex("parent_id"));
+        title = cursor.getString(cursor.getColumnIndex("title"));
+
+        long authorId = cursor.getLong(cursor.getColumnIndex("author_id"));
+        author = new Author();
+        author.setId(authorId);
+
+        abstaction = cursor.getString(cursor.getColumnIndex("abstaction"));
+        image = cursor.getString(cursor.getColumnIndex("image_filename"));
+        likeCount = cursor.getInt(cursor.getColumnIndex("like_count"));
+
+        created = cursor.getLong(cursor.getColumnIndex("created"));
+        updated = cursor.getLong(cursor.getColumnIndex("updated"));
+    }
+
+    @Override
+    public void findById(long id, SQLiteDatabase db) {
+        super.findById(id, db);
+
+        List<Column> columns = getColumns();
+        new Column().findByArticleId(id, db, columns);
     }
 
     /**
@@ -145,11 +200,30 @@ public class Article implements Serializable {
      * <p/>
      * 複数手順がある場合Stepに分けたり、バリエーションなどを記述することを想定している。
      */
-    public static class Column implements Serializable {
+    public static class Column extends AbsData<Column> implements Serializable {
+
+        private long id;
+        private long articleId;
 
         private String title;
         private String image;
         private String description;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public long getArticleId() {
+            return articleId;
+        }
+
+        public void setArticleId(long articleId) {
+            this.articleId = articleId;
+        }
 
         public String getTitle() {
             return title;
@@ -173,6 +247,143 @@ public class Article implements Serializable {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        @Override
+        public String getTableName() {
+            return "columns";
+        }
+
+        public void findByArticleId(long articleId, SQLiteDatabase db, List<Column> out) {
+            String table = getTableName();
+            String[] columns = getAllColumns();
+            String selection = "article_id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(articleId)};
+            String groupBy = null;
+            String having = null;
+            String orderBy = null;
+
+            Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+            while (cursor.moveToNext()) {
+                Column column = getInstance();
+                column.read(cursor);
+                out.add(column);
+            }
+
+        }
+
+        @Override
+        public String[] getAllColumns() {
+            return new String[]{
+                    "_id",
+                    "article_id",
+                    "title",
+                    "description",
+                    "image_filename",
+            };
+        }
+
+        @Override
+        public void write(ContentValues values) {
+            values.put("article_id", articleId);
+            values.put("title", title);
+            values.put("description", description);
+            values.put("image_filename", image);
+
+        }
+
+        @Override
+        public void read(Cursor cursor) {
+            id = cursor.getLong(cursor.getColumnIndex("_id"));
+            articleId = cursor.getLong(cursor.getColumnIndex("article_id"));
+            title = cursor.getString(cursor.getColumnIndex("title"));
+            description = cursor.getString(cursor.getColumnIndex("description"));
+            image = cursor.getString(cursor.getColumnIndex("image_filename"));
+        }
+
+        @Override
+        Column getInstance() {
+            return new Column();
+        }
+    }
+
+    private class ArticleDisasterType extends AbsData<ArticleDisasterType> {
+
+        private long id;
+        private long articleId;
+        private long disastertypeId;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public long getArticleId() {
+            return articleId;
+        }
+
+        public void setArticleId(long articleId) {
+            this.articleId = articleId;
+        }
+
+        public long getDisastertypeId() {
+            return disastertypeId;
+        }
+
+        public void setDisastertypeId(long disastertypeId) {
+            this.disastertypeId = disastertypeId;
+        }
+
+        @Override
+        public String getTableName() {
+            return "articles_disastertypes";
+        }
+
+        @Override
+        public String[] getAllColumns() {
+            return new String[]{
+                    "_id",
+                    "article_id",
+                    "disastertype_id",
+            };
+        }
+
+        @Override
+        public void write(ContentValues values) {
+            values.put("article_id", articleId);
+            values.put("disastertype_id", disastertypeId);
+        }
+
+        @Override
+        public void read(Cursor cursor) {
+            id = cursor.getLong(cursor.getColumnIndex("_id"));
+            articleId = cursor.getLong(cursor.getColumnIndex("article_id"));
+            disastertypeId = cursor.getLong(cursor.getColumnIndex("disastertype_id"));
+        }
+
+        @Override
+        ArticleDisasterType getInstance() {
+            return new ArticleDisasterType();
+        }
+
+        public void findByDisasterTypeId(long id, SQLiteDatabase db, List<ArticleDisasterType> out) {
+            String table = getTableName();
+            String[] columns = getAllColumns();
+            String selection = null;
+            String[] selectionArgs = null;
+            String groupBy = null;
+            String having = null;
+            String orderBy = "_id";
+
+            Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+            while (cursor.moveToNext()) {
+                ArticleDisasterType obj = getInstance();
+                obj.read(cursor);
+                out.add(obj);
+            }
         }
     }
 }
