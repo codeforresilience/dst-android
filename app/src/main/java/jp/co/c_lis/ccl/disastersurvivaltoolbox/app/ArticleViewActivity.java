@@ -100,6 +100,19 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
             Article article = (Article) getArguments().getSerializable(KEY_ARTICLE);
             View rootView = inflater.inflate(R.layout.fragment_summary, container, false);
 
+            ImageView image = (ImageView) rootView.findViewById(R.id.iv_image);
+            String imageFileName = article.getImage();
+            if (imageFileName != null) {
+                image.setVisibility(View.VISIBLE);
+                try {
+                    image.setImageBitmap(BitmapFactory.decodeStream(
+                            getActivity().getAssets().open(imageFileName)));
+                } catch (IOException e) {
+                }
+            } else {
+                image.setVisibility(View.GONE);
+            }
+
             TextView abstraction = (TextView) rootView.findViewById(R.id.tv_description);
             abstraction.setText(article.getAbstaction());
 
@@ -136,10 +149,16 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
             description.setText(column.getDescription());
 
             ImageView image = (ImageView) rootView.findViewById(R.id.iv_image);
-            try {
-                image.setImageBitmap(BitmapFactory.decodeStream(
-                        getActivity().getAssets().open(column.getImage())));
-            } catch (IOException e) {
+            String imageFileName = column.getImage();
+            if (imageFileName != null) {
+                image.setVisibility(View.VISIBLE);
+                try {
+                    image.setImageBitmap(BitmapFactory.decodeStream(
+                            getActivity().getAssets().open(imageFileName)));
+                } catch (IOException e) {
+                }
+            } else {
+                image.setVisibility(View.GONE);
             }
 
             return rootView;

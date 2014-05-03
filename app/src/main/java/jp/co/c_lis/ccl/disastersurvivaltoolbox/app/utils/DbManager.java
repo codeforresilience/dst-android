@@ -10,6 +10,7 @@ import java.util.List;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Author;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
+import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
 
 public class DbManager extends SQLiteOpenHelper {
 
@@ -42,7 +43,7 @@ public class DbManager extends SQLiteOpenHelper {
                     "parent_id integer default -1," +
                     "title text," +
                     "author_id integer," +
-                    "abstaction text," +
+                    "abstraction text," +
                     "image_filename text," +
                     "like_count integer," +
                     "created integer," +
@@ -65,6 +66,15 @@ public class DbManager extends SQLiteOpenHelper {
                     "disastertype_id integer" +
                     ")";
 
+    private static final String CREATE_TABLE_HISTORIES =
+            "CREATE TABLE histories(" +
+                    "_id integer primary key," +
+                    "type integer," +
+                    "article_id integer," +
+                    "author_id integer," +
+                    "updated_time integer" +
+                    ")";
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_DISASTER_TYPES);
@@ -72,15 +82,40 @@ public class DbManager extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_ARTICLES);
         db.execSQL(CREATE_TABLE_COLUMNS);
         db.execSQL(CREATE_TABLE_ARTICLES_DISASTERTYPES);
+        db.execSQL(CREATE_TABLE_HISTORIES);
 
         addDisasterTypes(db);
         authorList.addAll(addDumyAuthors(db));
 
-        addDummyArticle1(db);
-        addDummyArticle2(db);
-        addDummyArticle3(db);
-        addDummyArticle4(db);
-        addDummyArticle5(db);
+        Article article1 = addDummyArticle1(db);
+        Article article2 = addDummyArticle2(db);
+        Article article3 = addDummyArticle3(db);
+        Article article4 = addDummyArticle4(db);
+        Article article5 = addDummyArticle5(db);
+
+        History history1 = new History();
+        history1.setType(History.Type.Translated);
+        history1.setArticle(article1);
+        history1.setAuthor(authorList.get(3));
+        history1.insert(db);
+
+        History history2 = new History();
+        history2.setType(History.Type.Replicated);
+        history2.setArticle(article2);
+        history2.setAuthor(authorList.get(2));
+        history2.insert(db);
+
+        History history3 = new History();
+        history3.setType(History.Type.Created);
+        history3.setArticle(article3);
+        history3.setAuthor(authorList.get(1));
+        history3.insert(db);
+
+        History history4 = new History();
+        history4.setType(History.Type.Updated);
+        history4.setArticle(article4);
+        history4.setAuthor(authorList.get(0));
+        history4.insert(db);
     }
 
     private void addDisasterTypes(SQLiteDatabase db) {
@@ -121,7 +156,7 @@ public class DbManager extends SQLiteOpenHelper {
         return list;
     }
 
-    private void addDummyArticle1(SQLiteDatabase db) {
+    private Article addDummyArticle1(SQLiteDatabase db) {
 
         Article article = new Article();
 
@@ -162,9 +197,11 @@ public class DbManager extends SQLiteOpenHelper {
         article.setLikeCount(4);
 
         article.insert(db);
+
+        return article;
     }
 
-    private void addDummyArticle2(SQLiteDatabase db) {
+    private Article addDummyArticle2(SQLiteDatabase db) {
 
         Article article = new Article();
 
@@ -182,10 +219,13 @@ public class DbManager extends SQLiteOpenHelper {
                 "カイロ、どこに張れば効率的　より転載");
 
         article.setLikeCount(3);
+
         article.insert(db);
+
+        return article;
     }
 
-    private void addDummyArticle3(SQLiteDatabase db) {
+    private Article addDummyArticle3(SQLiteDatabase db) {
 
         Article article = new Article();
 
@@ -230,10 +270,13 @@ public class DbManager extends SQLiteOpenHelper {
         article.getColumns().add(column);
 
         article.setLikeCount(5);
+
         article.insert(db);
+
+        return article;
     }
 
-    private void addDummyArticle4(SQLiteDatabase db) {
+    private Article addDummyArticle4(SQLiteDatabase db) {
 
         Article article = new Article();
 
@@ -249,10 +292,13 @@ public class DbManager extends SQLiteOpenHelper {
         article.setAbstaction("水のない時の歯みがき代わりのお口のケア方法です。");
 
         article.setLikeCount(10);
+
         article.insert(db);
+
+        return article;
     }
 
-    private void addDummyArticle5(SQLiteDatabase db) {
+    private Article addDummyArticle5(SQLiteDatabase db) {
 
         Article article = new Article();
 
@@ -286,7 +332,10 @@ public class DbManager extends SQLiteOpenHelper {
         article.getColumns().add(column);
 
         article.setLikeCount(8);
+
         article.insert(db);
+
+        return article;
     }
 
     @Override

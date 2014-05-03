@@ -16,18 +16,9 @@ public class DisasterType extends AbsData<DisasterType> {
     public static final DisasterType SNOW = new DisasterType(
             2, R.drawable.disaster_type_snow, "大雪", "Snow");
 
-    private long id;
     private int icon;
     private String name;
     private String nameEn;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public int getIcon() {
         return icon;

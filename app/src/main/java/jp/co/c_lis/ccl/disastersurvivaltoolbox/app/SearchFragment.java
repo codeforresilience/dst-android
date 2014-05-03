@@ -43,6 +43,7 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
     }
 
     private ListView mListView;
+    private EditText mKeyword;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,13 +54,16 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
         mListView.setOnItemClickListener(this);
 
         View headerView = inflater.inflate(R.layout.search_header, null);
-        EditText keyword = (EditText) headerView.findViewById(R.id.et_keyword);
-        keyword.setOnEditorActionListener(this);
+        mKeyword = (EditText) headerView.findViewById(R.id.et_keyword);
+        mKeyword.setOnEditorActionListener(this);
 
         mDisasterTypeAdapter = new DisasterTypeAdapter();
         GridView gridView = (GridView) headerView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(mDisasterTypeAdapter);
         mListView.addHeaderView(headerView);
+
+        // TODO: ASyncTask
+        executeSearch();
 
         return rootView;
     }
@@ -78,6 +82,12 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        DisasterType type = (DisasterType) buttonView.getTag();
+        if (isChecked) {
+            mSelectedDisasterType.add(type);
+        } else {
+            mSelectedDisasterType.remove(type);
+        }
         executeSearch();
     }
 
@@ -93,11 +103,17 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
     public void executeSearch() {
         mArticleList.clear();
 
-        new Article().findAll(mDb, mArticleList);
+        String keyword = mKeyword.getText().toString();
+
+        new Article().find(mDb,
+                mSelectedDisasterType,
+                "".equals(keyword) ? null : keyword,
+                mArticleList);
         mArticleAdapter.notifyDataSetChanged();
     }
 
     private List<DisasterType> mDisasterTypeList = new ArrayList<DisasterType>();
+    private List<DisasterType> mSelectedDisasterType = new ArrayList<DisasterType>();
 
     private class DisasterTypeAdapter extends BaseAdapter {
 
@@ -122,12 +138,16 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
             ToggleButton view = (ToggleButton) View.inflate(getActivity(), R.layout.disaster_type, null);
 
             // 上に画像を表示
+            view.setChecked(true);
             view.setCompoundDrawablesWithIntrinsicBounds(0, type.getIcon(), 0, 0);
             view.setTextOn(type.getNameEn());
             view.setTextOff(type.getNameEn());
             view.setText(type.getNameEn());
             view.setPadding(5, 5, 5, 5);
             view.setOnCheckedChangeListener(SearchFragment.this);
+
+            view.setTag(type);
+
             return view;
         }
     }
@@ -159,7 +179,10 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
 
             Article article = (Article) getItem(position);
             TextView title = (TextView) convertView.findViewById(R.id.tv_title);
-            title.setText(article.getTitle() + "\n" + article.getAbstaction());
+            title.setText(article.getTitle());
+
+            TextView description = (TextView) convertView.findViewById(R.id.tv_description);
+            description.setText(article.getAbstaction());
 
             ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
             if (article.getImage() != null) {
@@ -168,7 +191,6 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
                     thumbnail.setImageBitmap(BitmapFactory.decodeStream(
                             getActivity().getAssets().open(article.getImage())));
                 } catch (IOException e) {
-                    e.printStackTrace();
                 }
             } else {
                 thumbnail.setVisibility(View.GONE);
@@ -204,10 +226,11 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
             public void run() {
                 super.run();
 
+                new DisasterType().findAll(mDb, mDisasterTypeList);
+                mSelectedDisasterType.addAll(mDisasterTypeList);
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        new DisasterType().findAll(mDb, mDisasterTypeList);
                         mDisasterTypeAdapter.notifyDataSetChanged();
                     }
                 });

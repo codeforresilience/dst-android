@@ -1,18 +1,21 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * 変更履歴クラス
  */
-public class History implements Serializable {
+public class History extends AbsData<History> implements Serializable {
 
     private long time = System.currentTimeMillis();
 
-    private long id;
-
     public enum Type {
+        Created,
         Updated,
         Replicated,
         Translated,
@@ -32,14 +35,6 @@ public class History implements Serializable {
         this.time = time;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
     public Type getType() {
         return type;
     }
@@ -49,6 +44,8 @@ public class History implements Serializable {
      */
     public String getTypeString() {
         switch (type) {
+            case Created:
+                return "作成";
             case Updated:
                 return "更新";
             case Replicated:
@@ -60,8 +57,41 @@ public class History implements Serializable {
         }
     }
 
+    public int getTypeInt() {
+        switch (type) {
+            case Created:
+                return 0;
+            case Updated:
+                return 1;
+            case Replicated:
+                return 2;
+            case Translated:
+                return 3;
+            default:
+                return -1;
+        }
+    }
+
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public void setType(int num) {
+        Type val = Type.Created;
+        switch (num) {
+            case 1:
+                val = Type.Updated;
+                break;
+            case 2:
+                val = Type.Replicated;
+                break;
+            case 3:
+                val = Type.Translated;
+                break;
+            default:
+                break;
+        }
+        type = val;
     }
 
     public Author getAuthor() {
@@ -82,5 +112,60 @@ public class History implements Serializable {
 
     public String getAbstraction() {
         return String.format("%s さんが、『%s』の記事を%sしました。", author.getName(), article.getTitle(), getTypeString());
+    }
+
+    @Override
+    History getInstance() {
+        return new History();
+    }
+
+    @Override
+    public String getTableName() {
+        return "histories";
+    }
+
+    @Override
+    public String[] getAllColumns() {
+        return new String[]{
+                "_id",
+                "type",
+                "author_id",
+                "article_id",
+                "updated_time",
+        };
+    }
+
+    @Override
+    public void write(ContentValues values) {
+        values.put("type", getTypeInt());
+        values.put("author_id", author.getId());
+        values.put("article_id", article.getId());
+        values.put("updated_time", time);
+
+    }
+
+    @Override
+    public void read(Cursor cursor) {
+        id = cursor.getLong(cursor.getColumnIndex("_id"));
+
+        setType(cursor.getInt(cursor.getColumnIndex("type")));
+
+        author = new Author();
+        author.setId(cursor.getLong(cursor.getColumnIndex("author_id")));
+
+        article = new Article();
+        article.setId(cursor.getLong(cursor.getColumnIndex("article_id")));
+        time = cursor.getLong(cursor.getColumnIndex("updated_time"));
+    }
+
+
+    @Override
+    public void findAll(SQLiteDatabase db, List<History> out) {
+        super.findAll(db, out);
+
+        for (History history : out) {
+            history.getArticle().findById(history.getId(), db);
+            history.getAuthor().findById(history.getAuthor().getId(), db);
+        }
     }
 }

@@ -72,13 +72,17 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
             title.setText(history.getAbstraction());
 
             ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
-            try {
-                thumbnail.setImageBitmap(BitmapFactory.decodeStream(
-                        getActivity().getAssets().open(history.getArticle().getImage())));
-            } catch (IOException e) {
-                e.printStackTrace();
+            String imagePath = history.getArticle().getImage();
+            if (imagePath != null) {
+                thumbnail.setVisibility(View.VISIBLE);
+                try {
+                    thumbnail.setImageBitmap(BitmapFactory.decodeStream(
+                            getActivity().getAssets().open(history.getArticle().getImage())));
+                } catch (IOException e) {
+                }
+            } else {
+                thumbnail.setVisibility(View.GONE);
             }
-
             TextView likeCount = (TextView) convertView.findViewById(R.id.tv_like_count);
             likeCount.setText(String.valueOf(history.getArticle().getLikeCount()));
 
@@ -101,6 +105,10 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        new History().findAll(mDb, mHistoryList);
+        mHistoryAdapter.notifyDataSetChanged();
+
     }
 
     @Override

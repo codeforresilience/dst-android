@@ -8,18 +8,9 @@ import java.io.Serializable;
 
 public class Author extends AbsData<Author> implements Serializable {
 
-    private long id;
     private String name;
     private String nameEn;
     private File image;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -94,7 +85,11 @@ public class Author extends AbsData<Author> implements Serializable {
         id = cursor.getLong(cursor.getColumnIndex("_id"));
         name = cursor.getString(cursor.getColumnIndex("name_ja"));
         nameEn = cursor.getString(cursor.getColumnIndex("name_en"));
-        image = new File(cursor.getString(cursor.getColumnIndex("photo_filename")));
+
+        String filePath = cursor.getString(cursor.getColumnIndex("photo_filename"));
+        if (filePath != null) {
+            image = new File(filePath);
+        }
     }
 
     @Override

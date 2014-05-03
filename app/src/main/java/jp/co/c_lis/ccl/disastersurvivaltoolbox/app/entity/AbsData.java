@@ -8,6 +8,16 @@ import java.util.List;
 
 public abstract class AbsData<T extends AbsData> implements ISqlite {
 
+    long id = -1;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     abstract T getInstance();
 
     public void findById(long id, SQLiteDatabase db) {
@@ -45,7 +55,8 @@ public abstract class AbsData<T extends AbsData> implements ISqlite {
     public long insert(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         write(values);
-        return db.insert(getTableName(), null, values);
+        id = db.insert(getTableName(), null, values);
+        return id;
     }
 
     public long updateById(long id, SQLiteDatabase db) {
