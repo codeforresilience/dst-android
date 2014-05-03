@@ -1,6 +1,7 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
@@ -62,9 +64,6 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
         gridView.setAdapter(mDisasterTypeAdapter);
         mListView.addHeaderView(headerView);
 
-        // TODO: ASyncTask
-        executeSearch();
-
         return rootView;
     }
 
@@ -110,6 +109,9 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
                 "".equals(keyword) ? null : keyword,
                 mArticleList);
         mArticleAdapter.notifyDataSetChanged();
+
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mKeyword.getWindowToken(), 0);
     }
 
     private List<DisasterType> mDisasterTypeList = new ArrayList<DisasterType>();
