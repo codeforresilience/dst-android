@@ -88,4 +88,26 @@ public class DisasterType extends AbsData<DisasterType> {
     DisasterType getInstance() {
         return new DisasterType();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DisasterType)) return false;
+
+        DisasterType that = (DisasterType) o;
+
+        if (icon != that.icon) return false;
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (nameEn != null ? !nameEn.equals(that.nameEn) : that.nameEn != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = icon;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (nameEn != null ? nameEn.hashCode() : 0);
+        return result;
+    }
 }

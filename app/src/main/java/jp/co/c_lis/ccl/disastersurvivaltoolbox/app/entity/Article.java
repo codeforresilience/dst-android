@@ -21,6 +21,15 @@ public class Article extends AbsData<Article> implements Serializable {
 
     private final List<DisasterType> disasterTypes = new ArrayList<DisasterType>();
 
+    public boolean hasDisasterTypes(DisasterType type) {
+        for (DisasterType dt : disasterTypes) {
+            if (dt.getId() == type.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private String title;
     private Author author;
     private String abstaction;
@@ -352,7 +361,6 @@ public class Article extends AbsData<Article> implements Serializable {
             values.put("title", title);
             values.put("description", description);
             values.put("image_filename", image);
-
         }
 
         @Override
@@ -362,6 +370,8 @@ public class Article extends AbsData<Article> implements Serializable {
             title = cursor.getString(cursor.getColumnIndex("title"));
             description = cursor.getString(cursor.getColumnIndex("description"));
             image = cursor.getString(cursor.getColumnIndex("image_filename"));
+
+            Log.d("image is ", "is " + image);
         }
 
         @Override
@@ -421,23 +431,6 @@ public class Article extends AbsData<Article> implements Serializable {
         @Override
         ArticleDisasterType getInstance() {
             return new ArticleDisasterType();
-        }
-
-        public void findByDisasterTypeId(long id, SQLiteDatabase db, List<ArticleDisasterType> out) {
-            String table = getTableName();
-            String[] columns = getAllColumns();
-            String selection = null;
-            String[] selectionArgs = null;
-            String groupBy = null;
-            String having = null;
-            String orderBy = "_id";
-
-            Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
-            while (cursor.moveToNext()) {
-                ArticleDisasterType obj = getInstance();
-                obj.read(cursor);
-                out.add(obj);
-            }
         }
     }
 }

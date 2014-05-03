@@ -1,6 +1,7 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -11,11 +12,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
+import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.FileUtils;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,
@@ -32,14 +35,54 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (BuildConfig.DEBUG) {
-            getDatabasePath(DbManager.FILE_NAME).delete();
-        }
-
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+
+        new Thread() {
+            @Override
+            public void run() {
+                copyFromAsset();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setup();
+                    }
+                });
+            }
+        }.start();
+    }
+
+    private void copyFromAsset() {
+        if (!BuildConfig.DEBUG && getCacheDir().list().length > 0) {
+            return;
+        }
+
+        AssetManager am = getAssets();
+        String[] files = null;
+        try {
+            files = am.list("");
+        } catch (IOException e) {
+        }
+
+        if (files == null) {
+            return;
+        }
+
+        for (String file : files) {
+            Log.d(TAG, "file = " + file);
+            File to = new File(getCacheDir(), file);
+
+            try {
+                FileUtils.copy(am.open(file), to);
+            } catch (IOException e) {
+            }
+
+        }
+    }
+
+    private void setup() {
         onAttach(getTitle(), R.menu.global);
 
         // Set up the drawer.

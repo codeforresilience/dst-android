@@ -161,10 +161,23 @@ public class History extends AbsData<History> implements Serializable {
 
     @Override
     public void findAll(SQLiteDatabase db, List<History> out) {
-        super.findAll(db, out);
+        String table = getTableName();
+        String[] columns = getAllColumns();
+        String selection = null;
+        String[] selectionArgs = null;
+        String groupBy = null;
+        String having = null;
+        String orderBy = "updated_time DESC";
+
+        Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+        while (cursor.moveToNext()) {
+            History obj = getInstance();
+            obj.read(cursor);
+            out.add(obj);
+        }
 
         for (History history : out) {
-            history.getArticle().findById(history.getId(), db);
+            history.getArticle().findById(history.getArticle().getId(), db);
             history.getAuthor().findById(history.getAuthor().getId(), db);
         }
     }

@@ -1,8 +1,8 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
-import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.List;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
 
 public class HomeFragment extends AbsFragment<HomeFragmentListener> implements AdapterView.OnItemClickListener {
+    private static final String TAG = "HomeFragment";
 
     private ListView mHistoryView;
 
@@ -75,11 +77,9 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
             String imagePath = history.getArticle().getImage();
             if (imagePath != null) {
                 thumbnail.setVisibility(View.VISIBLE);
-                try {
-                    thumbnail.setImageBitmap(BitmapFactory.decodeStream(
-                            getActivity().getAssets().open(history.getArticle().getImage())));
-                } catch (IOException e) {
-                }
+                File imageFile = new File(getActivity().getCacheDir(), history.getArticle().getImage());
+                thumbnail.setImageBitmap(BitmapFactory.decodeFile(imageFile.getAbsolutePath()));
+
             } else {
                 thumbnail.setVisibility(View.GONE);
             }
@@ -103,12 +103,14 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onResume() {
+        super.onResume();
 
+        Log.d(TAG, "onResume");
+
+        mHistoryList.clear();
         new History().findAll(mDb, mHistoryList);
         mHistoryAdapter.notifyDataSetChanged();
-
     }
 
     @Override

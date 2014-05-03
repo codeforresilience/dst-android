@@ -14,11 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
+import java.io.File;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 
 public class ArticleViewActivity extends ActionBarActivity implements ActionBar.TabListener {
+    private static final String TAG = "ArticleViewActivity";
 
     public static final String KEY_ARTICLE = "article";
 
@@ -48,7 +49,7 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
                     .setText(column.getTitle())
                     .setTabListener(this);
 
-            fragment = ArticleFragment.newInstance(column);
+            fragment = ColumnFragment.newInstance(column);
             tab.setTag(fragment);
             ab.addTab(tab);
         }
@@ -104,11 +105,8 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
             String imageFileName = article.getImage();
             if (imageFileName != null) {
                 image.setVisibility(View.VISIBLE);
-                try {
-                    image.setImageBitmap(BitmapFactory.decodeStream(
-                            getActivity().getAssets().open(imageFileName)));
-                } catch (IOException e) {
-                }
+                File imageFile = new File(getActivity().getCacheDir(), article.getImage());
+                image.setImageBitmap(BitmapFactory.decodeFile(imageFile.getAbsolutePath()));
             } else {
                 image.setVisibility(View.GONE);
             }
@@ -121,19 +119,19 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
 
     }
 
-    public static class ArticleFragment extends Fragment {
+    public static class ColumnFragment extends Fragment {
 
         private static final String KEY_ARTICLE = "column";
 
-        public static ArticleFragment newInstance(Article.Column column) {
-            ArticleFragment fragment = new ArticleFragment();
+        public static ColumnFragment newInstance(Article.Column column) {
+            ColumnFragment fragment = new ColumnFragment();
             Bundle args = new Bundle();
             args.putSerializable(KEY_ARTICLE, column);
             fragment.setArguments(args);
             return fragment;
         }
 
-        public ArticleFragment() {
+        public ColumnFragment() {
         }
 
         @Override
@@ -152,11 +150,8 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
             String imageFileName = column.getImage();
             if (imageFileName != null) {
                 image.setVisibility(View.VISIBLE);
-                try {
-                    image.setImageBitmap(BitmapFactory.decodeStream(
-                            getActivity().getAssets().open(imageFileName)));
-                } catch (IOException e) {
-                }
+                File imageFile = new File(getActivity().getCacheDir(), column.getImage());
+                image.setImageBitmap(BitmapFactory.decodeFile(imageFile.getAbsolutePath()));
             } else {
                 image.setVisibility(View.GONE);
             }

@@ -14,11 +14,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <GridView
+        android:id="@+id/gv_disaster_types"
+        android:layout_below="@id/et_title"
+        android:numColumns="4"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <EditText
         android:id="@+id/et_description"
         android:layout_marginTop="12dp"
         android:hint="Summary"
-        android:layout_below="@id/et_title"
+        android:layout_below="@id/gv_disaster_types"
         android:gravity="top"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
