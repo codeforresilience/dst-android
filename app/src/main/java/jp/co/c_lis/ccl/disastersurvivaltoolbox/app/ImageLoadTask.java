@@ -22,8 +22,10 @@ class ImageLoadTask extends AsyncTask<ImageLoadTask.Container, Void, Bitmap> {
     @Override
     protected void onPostExecute(Bitmap bitmap) {
         super.onPostExecute(bitmap);
-        container.imageView.setImageBitmap(bitmap);
-        container.imageView.setVisibility(View.VISIBLE);
+        if (bitmap != null) {
+            container.imageView.setImageBitmap(bitmap);
+            container.imageView.setVisibility(View.VISIBLE);
+        }
     }
 
     public static class Container {

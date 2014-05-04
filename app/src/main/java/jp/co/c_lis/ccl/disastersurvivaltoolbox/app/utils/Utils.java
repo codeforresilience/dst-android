@@ -10,13 +10,13 @@ public class Utils {
     }
 
     /* TODO: HashMapを使うなど、効率化の検討が必要 */
-    public static boolean isSelected(List<DisasterType> list, DisasterType type) {
+    public static DisasterType isSelected(List<DisasterType> list, DisasterType type) {
         for (DisasterType dt : list) {
             if (dt.getId() == type.getId()) {
-                return true;
+                return dt;
             }
         }
-        return false;
+        return null;
     }
 
 }

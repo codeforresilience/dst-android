@@ -17,7 +17,7 @@ import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.BuildConfig;
 public class Article extends AbsData<Article> implements Serializable {
     private static final String TAG = "Article";
 
-    private long parentId;
+    private long parentId = -1;
 
     private final List<DisasterType> disasterTypes = new ArrayList<DisasterType>();
 
@@ -185,6 +185,30 @@ public class Article extends AbsData<Article> implements Serializable {
             column.insert(db);
         }
 
+        for (DisasterType disasterType : disasterTypes) {
+            ArticleDisasterType obj = new ArticleDisasterType();
+            obj.setArticleId(id);
+            obj.setDisastertypeId(disasterType.getId());
+            obj.insert(db);
+        }
+
+        return id;
+    }
+
+    @Override
+    public long update(SQLiteDatabase db) {
+        ContentValues values = new ContentValues();
+        write(values);
+
+        db.update(getTableName(), values, "_id = ?", new String[]{String.valueOf(id)});
+
+        new Column().deleteByArticleId(id, db);
+        for (Column column : columns) {
+            column.setArticleId(id);
+            column.insert(db);
+        }
+
+        new ArticleDisasterType().deleteByArticleId(id, db);
         for (DisasterType disasterType : disasterTypes) {
             ArticleDisasterType obj = new ArticleDisasterType();
             obj.setArticleId(id);
@@ -387,17 +411,23 @@ public class Article extends AbsData<Article> implements Serializable {
             title = cursor.getString(cursor.getColumnIndex("title"));
             description = cursor.getString(cursor.getColumnIndex("description"));
             image = cursor.getString(cursor.getColumnIndex("image_filename"));
-
-            Log.d("image is ", "is " + image);
         }
 
         @Override
         Column getInstance() {
             return new Column();
         }
+
+        public void deleteByArticleId(long articleId, SQLiteDatabase db) {
+            String table = getTableName();
+            String selection = "article_id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(articleId)};
+
+            db.delete(table, selection, selectionArgs);
+        }
     }
 
-    private class ArticleDisasterType extends AbsData<ArticleDisasterType> {
+    public static class ArticleDisasterType extends AbsData<ArticleDisasterType> {
 
         private long articleId;
         private long disastertypeId;
@@ -449,5 +479,31 @@ public class Article extends AbsData<Article> implements Serializable {
         ArticleDisasterType getInstance() {
             return new ArticleDisasterType();
         }
+
+        public void deleteByArticleId(long articleId, SQLiteDatabase db) {
+            String table = getTableName();
+            String selection = "article_id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(articleId)};
+
+            db.delete(table, selection, selectionArgs);
+        }
+
+        public void findByArticleId(long articleId, List<DisasterType> out, SQLiteDatabase db) {
+            String table = getTableName();
+            String[] columns = getAllColumns();
+            String selection = "article_id = ?";
+            String[] selectionArgs = new String[]{String.valueOf(articleId)};
+            String groupBy = null;
+            String having = null;
+            String orderBy = null;
+
+            Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+            while (cursor.moveToNext()) {
+                DisasterType obj = new DisasterType();
+                obj.setId(cursor.getLong(cursor.getColumnIndex("disastertype_id")));
+                out.add(obj);
+            }
+        }
+
     }
 }

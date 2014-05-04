@@ -4,9 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.io.Serializable;
 import java.util.List;
 
-public abstract class AbsData<T extends AbsData> implements ISqlite {
+public abstract class AbsData<T extends AbsData> implements ISqlite, Serializable {
 
     long id = -1;
 
@@ -59,7 +60,7 @@ public abstract class AbsData<T extends AbsData> implements ISqlite {
         return id;
     }
 
-    public long updateById(long id, SQLiteDatabase db) {
+    public long update(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
         write(values);
         return db.update(getTableName(), values,

@@ -57,7 +57,8 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
         mKeyword = (EditText) headerView.findViewById(R.id.et_keyword);
         mKeyword.setOnEditorActionListener(this);
 
-        mDisasterTypeAdapter = new DisasterTypeAdapter(getActivity(), this, mDisasterTypeList);
+        mDisasterTypeAdapter = new DisasterTypeAdapter(getActivity(), this, mDisasterTypeList,
+                mSelectedDisasterType);
         GridView gridView = (GridView) headerView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(mDisasterTypeAdapter);
         mListView.addHeaderView(headerView);
@@ -79,12 +80,6 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        DisasterType type = (DisasterType) buttonView.getTag();
-        if (isChecked) {
-            mSelectedDisasterType.add(type);
-        } else {
-            mSelectedDisasterType.remove(type);
-        }
         executeSearch();
     }
 

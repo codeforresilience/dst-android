@@ -1,13 +1,17 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,24 +20,40 @@ import android.widget.TextView;
 import java.io.File;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
+import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
 
 public class ArticleViewActivity extends ActionBarActivity implements ActionBar.TabListener {
     private static final String TAG = "ArticleViewActivity";
 
-    public static final String KEY_ARTICLE = "article";
+    public static final String KEY_ARTICLE_ID = "article_id";
 
+    private long mArticleId;
     private Article mArticle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mArticle = (Article) getIntent().getSerializableExtra(KEY_ARTICLE);
+        mArticleId = getIntent().getLongExtra(KEY_ARTICLE_ID, -1);
+        setContentView(R.layout.activity_article);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mArticle = new Article();
+        if (mArticleId != -1) {
+            SQLiteDatabase db = new DbManager(this, DbManager.FILE_NAME, null).getReadableDatabase();
+            mArticle.findById(mArticleId, db);
+            db.close();
+        }
 
         ActionBar ab = getSupportActionBar();
         ab.setTitle(mArticle.getTitle());
 
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        ab.removeAllTabs();
 
         ActionBar.Tab tab = ab.newTab()
                 .setText(R.string.summary)
@@ -52,9 +72,6 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
             tab.setTag(fragment);
             ab.addTab(tab);
         }
-
-        setContentView(R.layout.activity_article);
-
     }
 
     @Override
@@ -62,6 +79,20 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
         MenuInflater menuInflater = new MenuInflater(this);
         menuInflater.inflate(R.menu.article, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_update) {
+            Log.d(TAG, "article_id = " + mArticle.getId());
+
+            Intent intent = new Intent();
+            intent.setClassName(getPackageName(), getPackageName() + ".ArticleUpdateActivity");
+            intent.putExtra(ArticleEditActivity.KEY_ARTICLE, mArticle);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

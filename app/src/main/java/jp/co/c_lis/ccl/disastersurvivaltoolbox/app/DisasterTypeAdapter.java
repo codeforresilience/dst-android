@@ -19,26 +19,25 @@ class DisasterTypeAdapter extends BaseAdapter implements CompoundButton.OnChecke
     private final CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
 
     private final List<DisasterType> disasterTypeList;
-    private final List<DisasterType> selectedDisasterTypeList = new ArrayList<DisasterType>();
-
-    private final boolean defaultChecked;
+    private List<DisasterType> selectedDisasterTypeList;
 
     DisasterTypeAdapter(Context context,
                         CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
                         List<DisasterType> list) {
-        this(context, onCheckedChangeListener, list, true);
+        this(context, onCheckedChangeListener, list, null);
     }
 
     DisasterTypeAdapter(Context context,
                         CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
-                        List<DisasterType> list, boolean defaultChecked) {
+                        List<DisasterType> list,
+                        List<DisasterType> selectedList) {
         this.context = context;
         this.onCheckedChangeListener = onCheckedChangeListener;
         disasterTypeList = list;
-        this.defaultChecked = defaultChecked;
+        this.selectedDisasterTypeList = selectedList;
 
-        if (this.defaultChecked) {
-            selectedDisasterTypeList.addAll(disasterTypeList);
+        if (selectedDisasterTypeList == null) {
+            selectedDisasterTypeList = new ArrayList<DisasterType>();
         }
     }
 
@@ -66,7 +65,7 @@ class DisasterTypeAdapter extends BaseAdapter implements CompoundButton.OnChecke
         }
 
         ToggleButton view = (ToggleButton) convertView;
-        view.setChecked(Utils.isSelected(selectedDisasterTypeList, type));
+        view.setChecked(Utils.isSelected(selectedDisasterTypeList, type) != null);
 
         // 上に画像を表示
         view.setCompoundDrawablesWithIntrinsicBounds(0, type.getIcon(), 0, 0);
@@ -86,6 +85,7 @@ class DisasterTypeAdapter extends BaseAdapter implements CompoundButton.OnChecke
         if (isChecked) {
             selectedDisasterTypeList.add(type);
         } else {
+            type = Utils.isSelected(selectedDisasterTypeList, type);
             selectedDisasterTypeList.remove(type);
         }
 

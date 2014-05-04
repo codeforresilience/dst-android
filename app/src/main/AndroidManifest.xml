@@ -27,11 +27,19 @@
             android:name=".ArticleViewActivity"
             android:label="@string/app_name"
             android:screenOrientation="nosensor" />
+
         <activity
             android:name=".ArticleEditActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".MainActivity"
             android:screenOrientation="nosensor" />
+
+        <activity-alias
+            android:name=".ArticleUpdateActivity"
+            android:targetActivity=".ArticleEditActivity"
+            android:label="@string/app_name"
+            android:icon="@drawable/ic_update"
+            android:screenOrientation="nosensor" />
+
     </application>
 
 </manifest>

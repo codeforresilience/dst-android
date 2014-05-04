@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.FileUtils;
 
 public class MainActivity extends ActionBarActivity
@@ -39,7 +38,7 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         if (BuildConfig.DEBUG) {
-            getDatabasePath(DbManager.FILE_NAME).delete();
+//            getDatabasePath(DbManager.FILE_NAME).delete();
         }
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -166,7 +165,7 @@ public class MainActivity extends ActionBarActivity
             Log.d(TAG, "onHistorySelected " + history.getArticle().getId());
         }
         Intent intent = new Intent(this, ArticleViewActivity.class);
-        intent.putExtra(ArticleViewActivity.KEY_ARTICLE, history.getArticle());
+        intent.putExtra(ArticleViewActivity.KEY_ARTICLE_ID, history.getArticle().getId());
         startActivity(intent);
     }
 
@@ -176,7 +175,7 @@ public class MainActivity extends ActionBarActivity
             Log.d(TAG, "onArticleSelected " + article.getId());
         }
         Intent intent = new Intent(this, ArticleViewActivity.class);
-        intent.putExtra(ArticleViewActivity.KEY_ARTICLE, article);
+        intent.putExtra(ArticleViewActivity.KEY_ARTICLE_ID, article.getId());
         startActivity(intent);
     }
 }

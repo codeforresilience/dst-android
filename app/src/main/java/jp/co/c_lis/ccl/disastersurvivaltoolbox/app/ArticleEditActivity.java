@@ -47,21 +47,33 @@ public class ArticleEditActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getIntent().hasExtra(KEY_ARTICLE)) {
-            mArticle = (Article) getIntent().getSerializableExtra(KEY_ARTICLE);
-        } else {
-            mArticle = new Article();
-        }
-
         ActionBar ab = getSupportActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        ab.setTitle("New Article");
+
+        if (getIntent().hasExtra(KEY_ARTICLE)) {
+            mArticle = (Article) getIntent().getSerializableExtra(KEY_ARTICLE);
+            ab.setTitle(mArticle.getTitle());
+        } else {
+            mArticle = new Article();
+            ab.setTitle("New Article");
+        }
 
         ActionBar.Tab summaryTag = ab.newTab()
                 .setText(R.string.summary)
                 .setTabListener(this);
         summaryTag.setTag(SummaryEditorFragment.newInstance(mArticle));
         ab.addTab(summaryTag, true);
+
+        for (Article.Column column : mArticle.getColumns()) {
+            ActionBar.Tab tab = ab.newTab()
+                    .setText(column.getTitle())
+                    .setTabListener(this);
+
+            Fragment fragment = ColumnEditorFragment.newInstance(column);
+            tab.setTag(fragment);
+
+            ab.addTab(tab);
+        }
 
         mAddTag = ab.newTab()
                 .setIcon(android.R.drawable.ic_input_add)
@@ -171,15 +183,20 @@ public class ArticleEditActivity extends ActionBarActivity implements
         }
 
         mArticle.setAuthor(author);
-        mArticle.insert(mDb);
 
         History history = new History();
-        history.setType(History.Type.Created);
         history.setAuthor(author);
         history.setArticle(mArticle);
-        long id = history.insert(mDb);
 
-        history.findById(id, mDb);
+        if (mArticle.getId() == -1) {
+            mArticle.insert(mDb);
+            history.setType(History.Type.Created);
+        } else {
+            mArticle.update(mDb);
+            history.setType(History.Type.Updated);
+        }
+
+        history.insert(mDb);
 
         return true;
     }

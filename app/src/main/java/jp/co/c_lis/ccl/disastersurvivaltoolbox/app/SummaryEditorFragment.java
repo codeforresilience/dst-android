@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
     private TextWatcher textWatcher;
 
     private Handler mHandler = new Handler();
+
+    private List<DisasterType> mDisasterTypeList = new ArrayList<DisasterType>();
 
     @Override
     public void onAttach(Activity activity) {
@@ -84,27 +87,56 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         article = (Article) getArguments().getSerializable(KEY_ARTICLE);
+
+        article.getDisasterTypes().clear();
+        new Article.ArticleDisasterType()
+                .findByArticleId(article.getId(), article.getDisasterTypes(), mDb);
+
         View rootView = inflater.inflate(R.layout.fragment_summary_edit, container, false);
 
         title = (EditText) rootView.findViewById(R.id.et_title);
+        title.setText(article.getTitle());
         title.addTextChangedListener(textWatcher);
 
-        disasterTypeAdapter = new DisasterTypeAdapter(getActivity(), this, mDisasterTypeList, false);
+        disasterTypeAdapter = new DisasterTypeAdapter(getActivity(), this, mDisasterTypeList,
+                article.getDisasterTypes());
+
         GridView gridView = (GridView) rootView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(disasterTypeAdapter);
 
-        ImageButton ib = (ImageButton) rootView.findViewById(R.id.ib_camera);
+        final ImageButton ib = (ImageButton) rootView.findViewById(R.id.ib_camera);
+
+        if (article.getImage() != null) {
+            new ImageLoadTask() {
+                @Override
+                protected Bitmap doInBackground(Container... params) {
+                    if (article.getImage() != null) {
+                        return super.doInBackground(params);
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    super.onPostExecute(bitmap);
+
+                    if (image != null) {
+                        ib.setImageDrawable(image.getDrawable());
+                    }
+                    image = ib;
+                }
+            }.execute(new ImageLoadTask.Container(ib, new File(getActivity().getCacheDir(), article.getImage())));
+        }
         ib.setOnClickListener(this);
 
-        if (image != null) {
-            ib.setImageDrawable(image.getDrawable());
-        }
-        image = ib;
-
         abstraction = (EditText) rootView.findViewById(R.id.et_description);
+        abstraction.setText(article.getAbstaction());
 
         source = (EditText) rootView.findViewById(R.id.et_source);
         sourceUrl = (EditText) rootView.findViewById(R.id.et_source_url);
+
+        source.setText(article.getSource());
+        sourceUrl.setText(article.getSourceUrl());
 
         return rootView;
     }
@@ -132,8 +164,6 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
     public void setImageBitmap(Bitmap bitmap) {
         image.setImageBitmap(bitmap);
     }
-
-    private List<DisasterType> mDisasterTypeList = new ArrayList<DisasterType>();
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

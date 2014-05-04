@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import java.io.File;
+
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 
 public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragment.Listener> implements View.OnClickListener {
@@ -18,10 +20,6 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
     private static final String KEY_COLUMN = "column";
 
     private Article.Column column;
-
-    public Article.Column getColumn() {
-        return column;
-    }
 
     public static ColumnEditorFragment newInstance(Article.Column column) {
         ColumnEditorFragment fragment = new ColumnEditorFragment();
@@ -65,13 +63,19 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
         description = (EditText) rootView.findViewById(R.id.et_description);
         description.setText(column.getDescription());
 
-        ImageButton ib = (ImageButton) rootView.findViewById(R.id.ib_camera);
-        ib.setOnClickListener(this);
-
-        if (image != null) {
-            ib.setImageDrawable(image.getDrawable());
+        image = (ImageButton) rootView.findViewById(R.id.ib_camera);
+        if (column.getImage() != null) {
+            new ImageLoadTask() {
+                @Override
+                protected Bitmap doInBackground(Container... params) {
+                    if (column.getImage() != null) {
+                        return super.doInBackground(params);
+                    }
+                    return null;
+                }
+            }.execute(new ImageLoadTask.Container(image, new File(getActivity().getCacheDir(), column.getImage())));
         }
-        image = ib;
+        image.setOnClickListener(this);
 
         return rootView;
     }
@@ -88,8 +92,10 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
 
     @Override
     public void publish() {
-        column.setTitle(title.getText().toString());
-        column.setDescription(description.getText().toString());
+        if (title != null && description != null) {
+            column.setTitle(title.getText().toString());
+            column.setDescription(description.getText().toString());
+        }
     }
 
     @Override
