@@ -2,6 +2,7 @@ package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
@@ -17,6 +18,7 @@ import java.io.IOException;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
+import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.FileUtils;
 
 public class MainActivity extends ActionBarActivity
@@ -36,21 +38,32 @@ public class MainActivity extends ActionBarActivity
 
         setContentView(R.layout.activity_main);
 
+        if (BuildConfig.DEBUG) {
+            getDatabasePath(DbManager.FILE_NAME).delete();
+        }
+
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
 
-        new Thread() {
+        new AsyncTask<Void, Void, Void>() {
             @Override
-            public void run() {
+            protected Void doInBackground(Void... params) {
                 copyFromAsset();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setup();
-                    }
-                });
+                return null;
             }
-        }.start();
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                onAttach(getTitle(), R.menu.global);
+
+                // Set up the drawer.
+                mNavigationDrawerFragment.setUp(
+                        R.id.navigation_drawer,
+                        (DrawerLayout) findViewById(R.id.drawer_layout));
+            }
+        }.execute();
     }
 
     private void copyFromAsset() {
@@ -79,15 +92,6 @@ public class MainActivity extends ActionBarActivity
             }
 
         }
-    }
-
-    private void setup() {
-        onAttach(getTitle(), R.menu.global);
-
-        // Set up the drawer.
-        mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
     @Override

@@ -2,9 +2,6 @@ package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -21,7 +18,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -61,7 +57,7 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
         mKeyword = (EditText) headerView.findViewById(R.id.et_keyword);
         mKeyword.setOnEditorActionListener(this);
 
-        mDisasterTypeAdapter = new DisasterTypeAdapter();
+        mDisasterTypeAdapter = new DisasterTypeAdapter(getActivity(), this, mDisasterTypeList);
         GridView gridView = (GridView) headerView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(mDisasterTypeAdapter);
         mListView.addHeaderView(headerView);
@@ -118,43 +114,6 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
 
     private List<DisasterType> mDisasterTypeList = new ArrayList<DisasterType>();
     private List<DisasterType> mSelectedDisasterType = new ArrayList<DisasterType>();
-
-    private class DisasterTypeAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mDisasterTypeList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mDisasterTypeList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            DisasterType type = (DisasterType) getItem(position);
-            ToggleButton view = (ToggleButton) View.inflate(getActivity(), R.layout.disaster_type, null);
-
-            // 上に画像を表示
-            view.setChecked(true);
-            view.setCompoundDrawablesWithIntrinsicBounds(0, type.getIcon(), 0, 0);
-            view.setTextOn(type.getNameEn());
-            view.setTextOff(type.getNameEn());
-            view.setText(type.getNameEn());
-            view.setPadding(5, 5, 5, 5);
-            view.setOnCheckedChangeListener(SearchFragment.this);
-
-            view.setTag(type);
-
-            return view;
-        }
-    }
 
     private final List<Article> mArticleList = new ArrayList<Article>();
 

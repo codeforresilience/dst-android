@@ -21,15 +21,6 @@ public class Article extends AbsData<Article> implements Serializable {
 
     private final List<DisasterType> disasterTypes = new ArrayList<DisasterType>();
 
-    public boolean hasDisasterTypes(DisasterType type) {
-        for (DisasterType dt : disasterTypes) {
-            if (dt.getId() == type.getId()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private String title;
     private Author author;
     private String abstaction;
@@ -38,6 +29,9 @@ public class Article extends AbsData<Article> implements Serializable {
     private final List<Column> columns = new ArrayList<Column>();
 
     private int likeCount;
+
+    private String source;
+    private String sourceUrl;
 
     private long created = System.currentTimeMillis();
 
@@ -107,6 +101,22 @@ public class Article extends AbsData<Article> implements Serializable {
         this.likeCount = likeCount;
     }
 
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getSourceUrl() {
+        return sourceUrl;
+    }
+
+    public void setSourceUrl(String sourceUrl) {
+        this.sourceUrl = sourceUrl;
+    }
+
     public long getCreated() {
         return created;
     }
@@ -138,6 +148,8 @@ public class Article extends AbsData<Article> implements Serializable {
                 "abstraction",
                 "image_filename",
                 "like_count",
+                "source",
+                "source_url",
                 "created",
                 "updated",
         };
@@ -151,6 +163,8 @@ public class Article extends AbsData<Article> implements Serializable {
         values.put("abstraction", abstaction);
         values.put("image_filename", image);
         values.put("like_count", likeCount);
+        values.put("source", source);
+        values.put("source_url", sourceUrl);
         values.put("created", created);
         values.put("updated", updated);
     }
@@ -195,6 +209,9 @@ public class Article extends AbsData<Article> implements Serializable {
         image = cursor.getString(cursor.getColumnIndex("image_filename"));
         likeCount = cursor.getInt(cursor.getColumnIndex("like_count"));
 
+        source = cursor.getString(cursor.getColumnIndex("source"));
+        sourceUrl = cursor.getString(cursor.getColumnIndex("source_url"));
+
         created = cursor.getLong(cursor.getColumnIndex("created"));
         updated = cursor.getLong(cursor.getColumnIndex("updated"));
     }
@@ -224,7 +241,7 @@ public class Article extends AbsData<Article> implements Serializable {
         StringBuffer sql = new StringBuffer();
         sql.append("SELECT")
                 .append(" _id, parent_id, title, author_id, abstraction,")
-                .append(" image_filename, like_count, created, updated")
+                .append(" image_filename, like_count, source, source_url, created, updated")
                 .append(" FROM articles")
                 .append(" WHERE")
                 .append(" 1 = 0");

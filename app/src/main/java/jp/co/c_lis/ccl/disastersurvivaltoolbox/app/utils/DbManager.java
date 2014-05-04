@@ -46,6 +46,8 @@ public class DbManager extends SQLiteOpenHelper {
                     "abstraction text," +
                     "image_filename text," +
                     "like_count integer," +
+                    "source text," +
+                    "source_url text," +
                     "created integer," +
                     "updated integer" +
                     ")";
@@ -215,10 +217,10 @@ public class DbManager extends SQLiteOpenHelper {
         article.setTitle("どこに貼ったら効率的にカイロで暖まれるか？");
         article.setImage("warmer.jpg");
         article.setAbstaction("NIKKEI PLUS１が行った実験によると、肩、背中の中心、腰、尾てい骨の上部の４ヶ所のなかでは“尾てい骨の上部”に最も体表温が高く、60分後の上昇幅は2.5度だったそうです。\n" +
-                "カイロが支給された被災地の方々、首都圏で節電のために暖房を節約している方々は、是非とも参考にしていただければと思います。\n" +
-                "カイロ、どこに張れば効率的　より転載");
+                "カイロが支給された被災地の方々、首都圏で節電のために暖房を節約している方々は、是非とも参考にしていただければと思います。");
 
         article.setLikeCount(3);
+        article.setSource("カイロ、どこに張れば効率的　より転載");
 
         article.insert(db);
 
@@ -240,8 +242,7 @@ public class DbManager extends SQLiteOpenHelper {
         article.setAbstaction("地震による断水で、もし長期間お風呂に入れない時はどうすればいいのか。\n" +
                 "アフリカのマラウイで活動した経験のある助産師の吉田敦子さん（５０）＝東京都世田谷区＝に聞いた。" +
                 "吉田さんは「私もアフリカで１週間の断水を経験していますが、顔と頭、\n" +
-                "手と足の指をできるだけ清潔にしておくことが有効と感じました」と話している。" +
-                "MSN産業ニュースより転載");
+                "手と足の指をできるだけ清潔にしておくことが有効と感じました」と話している。");
 
         Article.Column column = new Article.Column();
         column.setTitle("身体");
@@ -270,6 +271,9 @@ public class DbManager extends SQLiteOpenHelper {
         article.getColumns().add(column);
 
         article.setLikeCount(5);
+
+        article.setSource("MSN産業ニュースより転載");
+        article.setSourceUrl("http://sankei.jp.msn.com/life/news/110321/trd11032107350006-n1.htm");
 
         article.insert(db);
 

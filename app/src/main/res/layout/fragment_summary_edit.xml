@@ -38,7 +38,6 @@
             android:layout_width="128dp"
             android:layout_height="128dp" />
 
-
         <EditText
             android:id="@+id/et_description"
             android:layout_marginTop="12dp"
@@ -46,7 +45,25 @@
             android:layout_below="@id/ib_camera"
             android:gravity="top"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/et_source"
+            android:layout_marginTop="12dp"
+            android:hint="Source (optional)"
+            android:layout_below="@id/et_description"
+            android:singleLine="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/et_source_url"
+            android:layout_marginTop="12dp"
+            android:hint="Source URL (optional)"
+            android:layout_below="@id/et_source"
+            android:singleLine="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     </RelativeLayout>
 </ScrollView>

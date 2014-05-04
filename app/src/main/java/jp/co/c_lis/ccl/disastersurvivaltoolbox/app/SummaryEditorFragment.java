@@ -9,12 +9,10 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +76,8 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
 
     private EditText title;
     private EditText abstraction;
+    private EditText source;
+    private EditText sourceUrl;
     private ImageButton image;
 
     @Override
@@ -89,7 +89,7 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
         title = (EditText) rootView.findViewById(R.id.et_title);
         title.addTextChangedListener(textWatcher);
 
-        disasterTypeAdapter = new DisasterTypeAdapter();
+        disasterTypeAdapter = new DisasterTypeAdapter(getActivity(), this, mDisasterTypeList, false);
         GridView gridView = (GridView) rootView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(disasterTypeAdapter);
 
@@ -103,6 +103,9 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
 
         abstraction = (EditText) rootView.findViewById(R.id.et_description);
 
+        source = (EditText) rootView.findViewById(R.id.et_source);
+        sourceUrl = (EditText) rootView.findViewById(R.id.et_source_url);
+
         return rootView;
     }
 
@@ -115,6 +118,8 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
     public void publish() {
         article.setTitle(title.getText().toString());
         article.setAbstaction(abstraction.getText().toString());
+        article.setSource(source.getText().toString());
+        article.setSourceUrl(sourceUrl.getText().toString());
 
     }
 
@@ -137,44 +142,6 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
             article.getDisasterTypes().add(type);
         } else {
             article.getDisasterTypes().remove(type);
-        }
-    }
-
-    private class DisasterTypeAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mDisasterTypeList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mDisasterTypeList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            DisasterType type = (DisasterType) getItem(position);
-            ToggleButton view = (ToggleButton) View.inflate(getActivity(), R.layout.disaster_type, null);
-
-            view.setChecked(article.hasDisasterTypes(type));
-
-            // 上に画像を表示
-            view.setCompoundDrawablesWithIntrinsicBounds(0, type.getIcon(), 0, 0);
-            view.setTextOn(type.getNameEn());
-            view.setTextOff(type.getNameEn());
-            view.setText(type.getNameEn());
-            view.setPadding(5, 5, 5, 5);
-            view.setOnCheckedChangeListener(SummaryEditorFragment.this);
-
-            view.setTag(type);
-
-            return view;
         }
     }
 
