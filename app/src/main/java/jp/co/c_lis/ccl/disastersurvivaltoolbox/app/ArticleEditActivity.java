@@ -14,10 +14,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -133,45 +133,64 @@ public class ArticleEditActivity extends ActionBarActivity implements
         return super.onCreateOptionsMenu(menu);
     }
 
+    private boolean validate() {
+        if (mArticle.getTitle().length() == 0) {
+            Toast.makeText(this, R.string.title_is_blank, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        if (mArticle.getDisasterTypes().size() == 0) {
+            Toast.makeText(this, R.string.disastertypes_are_not_selected, Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean publish() {
+
+        ActionBar ab = getSupportActionBar();
+        int len = ab.getTabCount();
+        for (int i = 0; i < len; i++) {
+            ActionBar.Tab tab = ab.getTabAt(i);
+            if (tab.getTag() instanceof BaseEditorFragment) {
+                BaseEditorFragment frag = (BaseEditorFragment) tab.getTag();
+                frag.publish();
+            }
+        }
+
+        if (!validate()) {
+            return false;
+        }
+
+        List<Author> authorList = new ArrayList<Author>();
+
+        new Author().findAll(mDb, authorList);
+
+        Author author = null;
+        if (authorList.size() > 0) {
+            author = authorList.get(0);
+        }
+
+        mArticle.setAuthor(author);
+        mArticle.insert(mDb);
+
+        History history = new History();
+        history.setType(History.Type.Created);
+        history.setAuthor(author);
+        history.setArticle(mArticle);
+        long id = history.insert(mDb);
+
+        history.findById(id, mDb);
+
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_complete:
-
-                // publish
-                ActionBar ab = getSupportActionBar();
-                int len = ab.getTabCount();
-                for (int i = 0; i < len; i++) {
-                    ActionBar.Tab tab = ab.getTabAt(i);
-                    if (tab.getTag() instanceof BaseEditorFragment) {
-                        BaseEditorFragment frag = (BaseEditorFragment) tab.getTag();
-                        frag.publish();
-                    }
+                if (publish()) {
+                    finish();
                 }
-
-                List<Author> authorList = new ArrayList<Author>();
-
-                new Author().findAll(mDb, authorList);
-
-                Author author = null;
-                if (authorList.size() > 0) {
-                    author = authorList.get(0);
-                }
-
-                mArticle.setAuthor(author);
-                mArticle.insert(mDb);
-
-                History history = new History();
-                history.setType(History.Type.Created);
-                history.setAuthor(author);
-                history.setArticle(mArticle);
-                long id = history.insert(mDb);
-
-                history.findById(id, mDb);
-
-
-                Log.d(TAG, "history id = " + id);
-                finish();
                 break;
         }
         return super.onOptionsItemSelected(item);

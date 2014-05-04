@@ -22,4 +22,7 @@
 
     <string name="abstract_format">%1$s さんが、『%2$s』の記事を%3$sしました。</string>
 
+    <string name="title_is_blank">タイトルを入力してください</string>
+    <string name="disastertypes_are_not_selected">災害の種別を１つ以上選択してください</string>
+
 </resources>
