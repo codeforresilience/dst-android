@@ -41,6 +41,7 @@ public class DbManager extends SQLiteOpenHelper {
             "CREATE TABLE articles(" +
                     "_id integer primary key," +
                     "parent_id integer default -1," +
+                    "language text," +
                     "title text," +
                     "author_id integer," +
                     "abstraction text," +
@@ -169,6 +170,7 @@ public class DbManager extends SQLiteOpenHelper {
 
         article.setAuthor(authorList.get(0));
 
+        article.setLanguage("ja");
         article.setTitle("簡易トイレ");
         article.setImage("portable_toilet1.png");
         article.setAbstaction("水不足、停電などでトイレが使えない時に使える簡易トイレの作り方です。\n" +
@@ -214,6 +216,7 @@ public class DbManager extends SQLiteOpenHelper {
 
         article.setAuthor(authorList.get(1));
 
+        article.setLanguage("ja");
         article.setTitle("どこに貼ったら効率的にカイロで暖まれるか？");
         article.setImage("warmer.jpg");
         article.setAbstaction("NIKKEI PLUS１が行った実験によると、肩、背中の中心、腰、尾てい骨の上部の４ヶ所のなかでは“尾てい骨の上部”に最も体表温が高く、60分後の上昇幅は2.5度だったそうです。\n" +
@@ -238,6 +241,7 @@ public class DbManager extends SQLiteOpenHelper {
 
         article.setAuthor(authorList.get(2));
 
+        article.setLanguage("ja");
         article.setTitle("お風呂に入れない時");
         article.setAbstaction("地震による断水で、もし長期間お風呂に入れない時はどうすればいいのか。\n" +
                 "アフリカのマラウイで活動した経験のある助産師の吉田敦子さん（５０）＝東京都世田谷区＝に聞いた。" +
@@ -291,6 +295,7 @@ public class DbManager extends SQLiteOpenHelper {
 
         article.setAuthor(authorList.get(3));
 
+        article.setLanguage("ja");
         article.setTitle("水のない時のお口のケア");
         article.setImage("TLHF0001.jpg");
         article.setAbstaction("水のない時の歯みがき代わりのお口のケア方法です。");
@@ -312,6 +317,7 @@ public class DbManager extends SQLiteOpenHelper {
 
         article.setAuthor(authorList.get(1));
 
+        article.setLanguage("ja");
         article.setTitle("生理用ナプキンの生理以外の使い方");
         article.setImage("napkin1.png");
 

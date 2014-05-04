@@ -47,6 +47,13 @@
             android:icon="@drawable/ic_replicate"
             android:screenOrientation="nosensor" />
 
+        <activity-alias
+            android:name=".ArticleTranslateActivity"
+            android:targetActivity=".ArticleEditActivity"
+            android:label="@string/app_name"
+            android:icon="@drawable/ic_translate"
+            android:screenOrientation="nosensor" />
+
     </application>
 
 </manifest>

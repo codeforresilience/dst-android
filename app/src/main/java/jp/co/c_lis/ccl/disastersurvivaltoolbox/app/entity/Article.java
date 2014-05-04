@@ -21,6 +21,8 @@ public class Article extends AbsData<Article> implements Serializable {
 
     private final List<DisasterType> disasterTypes = new ArrayList<DisasterType>();
 
+    private String language;
+
     private String title;
     private Author author;
     private String abstaction;
@@ -55,6 +57,14 @@ public class Article extends AbsData<Article> implements Serializable {
 
     public List<DisasterType> getDisasterTypes() {
         return disasterTypes;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public String getTitle() {
@@ -143,6 +153,7 @@ public class Article extends AbsData<Article> implements Serializable {
         return new String[]{
                 "_id",
                 "parent_id",
+                "language",
                 "title",
                 "author_id",
                 "abstraction",
@@ -159,6 +170,7 @@ public class Article extends AbsData<Article> implements Serializable {
     public void write(ContentValues values) {
         values.put("parent_id", parentId);
         values.put("title", title);
+        values.put("language", language);
         values.put("author_id", author.getId());
         values.put("abstraction", abstaction);
         values.put("image_filename", image);
@@ -223,6 +235,7 @@ public class Article extends AbsData<Article> implements Serializable {
     public void read(Cursor cursor) {
         id = cursor.getLong(cursor.getColumnIndex("_id"));
         parentId = cursor.getLong(cursor.getColumnIndex("parent_id"));
+        language = cursor.getString(cursor.getColumnIndex("language"));
         title = cursor.getString(cursor.getColumnIndex("title"));
 
         long authorId = cursor.getLong(cursor.getColumnIndex("author_id"));
@@ -264,7 +277,7 @@ public class Article extends AbsData<Article> implements Serializable {
         // そのままでは0件の結果を返すSQL
         StringBuffer sql = new StringBuffer();
         sql.append("SELECT")
-                .append(" _id, parent_id, title, author_id, abstraction,")
+                .append(" _id, parent_id, language, title, author_id, abstraction,")
                 .append(" image_filename, like_count, source, source_url, created, updated")
                 .append(" FROM articles")
                 .append(" WHERE")

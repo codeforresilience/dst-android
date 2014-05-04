@@ -9,23 +9,84 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
 
 public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragment.Listener>
-        implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+        implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
+        AdapterView.OnItemSelectedListener {
 
     private static final String KEY_ARTICLE = "article";
+
+    private static final Locale[] LOCALES = new Locale[]{
+            Locale.ENGLISH,
+            Locale.GERMANY,
+            Locale.JAPANESE,
+    };
+
+    private static int getLocaleIndex(Locale[] locales, String locale) {
+        int len = locales.length;
+        for (int i = 0; i < len; i++) {
+            Locale loc = locales[i];
+            if (loc.getLanguage().equals(locale)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Locale locale = (Locale) parent.getAdapter().getItem(position);
+        article.setLanguage(locale.getLanguage());
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        article.setLanguage(null);
+    }
+
+    private class LanguageAdapter extends BaseAdapter {
+
+        @Override
+        public int getCount() {
+            return LOCALES.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return LOCALES[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Locale locale = (Locale) getItem(position);
+
+            TextView tv = (TextView) View.inflate(getActivity(), R.layout.language_row, null);
+            tv.setText(locale.getDisplayLanguage());
+            return tv;
+        }
+    }
 
     private Article article;
 
@@ -93,6 +154,14 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
                 .findByArticleId(article.getId(), article.getDisasterTypes(), mDb);
 
         View rootView = inflater.inflate(R.layout.fragment_summary_edit, container, false);
+
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.sp_language);
+        spinner.setAdapter(new LanguageAdapter());
+
+        int localeIndex = getLocaleIndex(LOCALES, article.getLanguage());
+        spinner.setSelection(localeIndex);
+
+        spinner.setOnItemSelectedListener(this);
 
         title = (EditText) rootView.findViewById(R.id.et_title);
         title.setText(article.getTitle());

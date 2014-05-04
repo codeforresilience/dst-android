@@ -198,6 +198,10 @@ public class ArticleEditActivity extends ActionBarActivity implements
             mArticle.setParentId(mArticle.getId());
             mArticle.insert(mDb);
             history.setType(History.Type.Replicated);
+        } else if (getIntent().getComponent().getClassName().lastIndexOf(".ArticleTranslateActivity") > -1) {
+            mArticle.setParentId(mArticle.getId());
+            mArticle.insert(mDb);
+            history.setType(History.Type.Translated);
         }
 
         history.insert(mDb);

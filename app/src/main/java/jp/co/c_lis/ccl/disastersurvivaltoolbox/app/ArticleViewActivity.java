@@ -93,6 +93,11 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
             intent.setClassName(getPackageName(), getPackageName() + ".ArticleReplicateActivity");
             intent.putExtra(ArticleEditActivity.KEY_ARTICLE, mArticle);
             startActivity(intent);
+        } else if (id == R.id.action_translate) {
+            Intent intent = new Intent();
+            intent.setClassName(getPackageName(), getPackageName() + ".ArticleTranslateActivity");
+            intent.putExtra(ArticleEditActivity.KEY_ARTICLE, mArticle);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
