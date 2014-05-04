@@ -1,6 +1,5 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -104,9 +103,9 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
             ImageView image = (ImageView) rootView.findViewById(R.id.iv_image);
             String imageFileName = article.getImage();
             if (imageFileName != null) {
-                image.setVisibility(View.VISIBLE);
+                image.setVisibility(View.INVISIBLE);
                 File imageFile = new File(getActivity().getCacheDir(), article.getImage());
-                image.setImageBitmap(BitmapFactory.decodeFile(imageFile.getAbsolutePath()));
+                new ImageLoadTask().execute(new ImageLoadTask.Container(image, imageFile));
             } else {
                 image.setVisibility(View.GONE);
             }
@@ -149,9 +148,10 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
             ImageView image = (ImageView) rootView.findViewById(R.id.iv_image);
             String imageFileName = column.getImage();
             if (imageFileName != null) {
-                image.setVisibility(View.VISIBLE);
+                image.setVisibility(View.INVISIBLE);
+
                 File imageFile = new File(getActivity().getCacheDir(), column.getImage());
-                image.setImageBitmap(BitmapFactory.decodeFile(imageFile.getAbsolutePath()));
+                new ImageLoadTask().execute(new ImageLoadTask.Container(image, imageFile));
             } else {
                 image.setVisibility(View.GONE);
             }
