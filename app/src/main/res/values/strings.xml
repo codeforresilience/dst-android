@@ -3,7 +3,7 @@
 
     <string name="app_name">DisasterSurvivalToolbox</string>
 
-    <string name="title_home">Home</string>
+    <string name="title_home">History</string>
     <string name="title_search">Search</string>
     <string name="title_article">Article</string>
     <string name="title_signout">Signout</string>

@@ -4,6 +4,7 @@
     tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.MainActivity">
     <item
         android:id="@+id/action_complete"
-        android:title="Complete"
+        android:title="Save"
+        android:icon="@android:drawable/ic_menu_save"
         app:showAsAction="withText|always" />
 </menu>

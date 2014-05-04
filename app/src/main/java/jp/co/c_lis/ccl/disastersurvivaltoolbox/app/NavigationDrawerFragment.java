@@ -59,8 +59,8 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mUserLearnedDrawer;
 
     private static final int[] NAVIGATION_ARRAY = new int[]{
-            R.string.title_home,
             R.string.title_search,
+            R.string.title_home,
             R.string.title_signout,
     };
 

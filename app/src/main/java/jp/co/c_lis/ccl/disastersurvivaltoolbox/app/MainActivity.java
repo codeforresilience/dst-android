@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
@@ -153,13 +152,6 @@ public class MainActivity extends ActionBarActivity
         } else if (id == R.id.action_add) {
             Intent intent = new Intent(this, ArticleEditActivity.class);
             startActivity(intent);
-        } else if (id == R.id.action_search) {
-            List<Fragment> list = getSupportFragmentManager().getFragments();
-            Fragment fragment = list.get(list.size() - 1);
-            if (fragment instanceof SearchFragment) {
-                ((SearchFragment) fragment).executeSearch();
-            }
-
         }
         return super.onOptionsItemSelected(item);
     }
