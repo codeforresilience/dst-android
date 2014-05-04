@@ -71,7 +71,7 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
 
             History history = (History) getItem(position);
             TextView title = (TextView) convertView.findViewById(R.id.tv_title);
-            title.setText(history.getAbstraction());
+            title.setText(history.getAbstraction(getResources()));
 
             ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
             String imagePath = history.getArticle().getImage();

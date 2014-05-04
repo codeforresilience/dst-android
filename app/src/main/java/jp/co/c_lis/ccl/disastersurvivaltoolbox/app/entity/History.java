@@ -1,11 +1,14 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 
 import android.content.ContentValues;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.Serializable;
 import java.util.List;
+
+import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.R;
 
 /**
  * 変更履歴クラス
@@ -39,22 +42,20 @@ public class History extends AbsData<History> implements Serializable {
         return type;
     }
 
-    /*
-     * TODO: I18N
-     */
-    public String getTypeString() {
+    public String getTypeString(Resources res) {
+        int resId = R.string.created;
         switch (type) {
-            case Created:
-                return "作成";
             case Updated:
-                return "更新";
+                resId = R.string.updated;
+                break;
             case Replicated:
-                return "複製";
+                resId = R.string.replicated;
+                break;
             case Translated:
-                return "翻訳";
-            default:
-                return "";
+                resId = R.string.translated;
+                break;
         }
+        return res.getString(resId);
     }
 
     public int getTypeInt() {
@@ -110,8 +111,8 @@ public class History extends AbsData<History> implements Serializable {
         this.article = article;
     }
 
-    public String getAbstraction() {
-        return String.format("%s さんが、『%s』の記事を%sしました。", author.getName(), article.getTitle(), getTypeString());
+    public String getAbstraction(Resources res) {
+        return String.format(res.getString(R.string.abstract_format), author.getName(), article.getTitle(), getTypeString(res));
     }
 
     @Override

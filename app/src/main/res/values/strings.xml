@@ -15,4 +15,11 @@
     <string name="action_example">Example action</string>
     <string name="action_settings">Settings</string>
 
+    <string name="created">作成</string>
+    <string name="updated">更新</string>
+    <string name="replicated">複製</string>
+    <string name="translated">翻訳</string>
+
+    <string name="abstract_format">%1$s さんが、『%2$s』の記事を%3$sしました。</string>
+
 </resources>
