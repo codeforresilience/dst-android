@@ -255,7 +255,7 @@ public class Article extends AbsData<Article> implements Serializable {
         if (keyword != null) {
             sql.append(" AND (")
                     .append(" title LIKE '%" + keyword + "%'")
-                    .append(" OR abstraction LIKE '%\" + keyword + \"%'");
+                    .append(" OR abstraction LIKE '%" + keyword + "%'");
 
             String subQuery = " SELECT article_id FROM columns WHERE" +
                     " description LIKE '%" + keyword + "%'";
