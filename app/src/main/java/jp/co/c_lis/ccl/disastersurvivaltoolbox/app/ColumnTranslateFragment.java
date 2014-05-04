@@ -14,7 +14,7 @@ import java.io.File;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 
-public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragment.Listener>
+public class ColumnTranslateFragment extends BaseEditorFragment<ColumnTranslateFragment.Listener>
         implements View.OnClickListener {
     private static final String TAG = "ColumnEditorFragment";
 
@@ -22,8 +22,8 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
 
     private Article.Column column;
 
-    public static ColumnEditorFragment newInstance(Article.Column column) {
-        ColumnEditorFragment fragment = new ColumnEditorFragment();
+    public static ColumnTranslateFragment newInstance(Article.Column column) {
+        ColumnTranslateFragment fragment = new ColumnTranslateFragment();
         fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putSerializable(KEY_COLUMN, column);
@@ -31,7 +31,7 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
         return fragment;
     }
 
-    public ColumnEditorFragment() {
+    public ColumnTranslateFragment() {
     }
 
     private TextWatcher textWatcher;
@@ -43,28 +43,39 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
         textWatcher = (TextWatcher) activity;
     }
 
-    private EditText title;
-    private EditText description;
-    private ImageButton image;
+    String imageFileName;
+
+    private EditText title2;
+    private EditText description2;
+    private ImageButton image2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_column_edit, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_column_translate, container, false);
 
         column = (Article.Column) getArguments().getSerializable(KEY_COLUMN);
         if (column == null) {
             column = new Article.Column();
         }
 
-        title = (EditText) rootView.findViewById(R.id.et_title);
+        EditText title = (EditText) rootView.findViewById(R.id.et_title);
         title.setText(column.getTitle());
-        title.addTextChangedListener(textWatcher);
 
-        description = (EditText) rootView.findViewById(R.id.et_description);
+        title2 = (EditText) rootView.findViewById(R.id.et_title2);
+        title2.addTextChangedListener(textWatcher);
+
+        EditText description = (EditText) rootView.findViewById(R.id.et_description);
         description.setText(column.getDescription());
 
-        image = (ImageButton) rootView.findViewById(R.id.ib_camera);
+        description2 = (EditText) rootView.findViewById(R.id.et_description2);
+
+        ImageButton image = (ImageButton) rootView.findViewById(R.id.ib_camera);
+
+        image2 = (ImageButton) rootView.findViewById(R.id.ib_camera2);
+        image2.setOnClickListener(this);
+
+        // FIXME: 写真撮影後、タブを切り替えて戻ってくると、翻訳前の参考画像も撮影した画像に置き換わる
         if (column.getImage() != null) {
             new ImageLoadTask() {
                 @Override
@@ -75,15 +86,23 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
                     return null;
                 }
             }.execute(new ImageLoadTask.Container(image, new File(getActivity().getCacheDir(), column.getImage())));
+            new ImageLoadTask() {
+                @Override
+                protected Bitmap doInBackground(Container... params) {
+                    if (column.getImage() != null) {
+                        return super.doInBackground(params);
+                    }
+                    return null;
+                }
+            }.execute(new ImageLoadTask.Container(image2, new File(getActivity().getCacheDir(), column.getImage())));
         }
-        image.setOnClickListener(this);
 
         return rootView;
     }
 
     @Override
     public void setImageBitmap(Bitmap bitmap) {
-        image.setImageBitmap(bitmap);
+        image2.setImageBitmap(bitmap);
     }
 
     @Override
@@ -93,9 +112,9 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
 
     @Override
     public void publish() {
-        if (title != null && description != null) {
-            column.setTitle(title.getText().toString());
-            column.setDescription(description.getText().toString());
+        if (title2 != null && description2 != null) {
+            column.setTitle(title2.getText().toString());
+            column.setDescription(description2.getText().toString());
         }
     }
 

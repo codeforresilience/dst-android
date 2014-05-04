@@ -17,11 +17,19 @@ public class History extends AbsData<History> implements Serializable {
 
     private long time = System.currentTimeMillis();
 
-    public enum Type {
-        Created,
-        Updated,
-        Replicated,
-        Translated,
+    public static class Type {
+        public static Type CREATE = new Type(0, R.string.created);
+        public static Type UPDATE = new Type(1, R.string.updated);
+        public static Type REPLICATE = new Type(2, R.string.replicated);
+        public static Type TRANSLATE = new Type(3, R.string.translated);
+
+        public final int value;
+        public final int stringRes;
+
+        private Type(int arg, int stringRes) {
+            value = arg;
+            this.stringRes = stringRes;
+        }
     }
 
     private Type type;
@@ -42,52 +50,21 @@ public class History extends AbsData<History> implements Serializable {
         return type;
     }
 
-    public String getTypeString(Resources res) {
-        int resId = R.string.created;
-        switch (type) {
-            case Updated:
-                resId = R.string.updated;
-                break;
-            case Replicated:
-                resId = R.string.replicated;
-                break;
-            case Translated:
-                resId = R.string.translated;
-                break;
-        }
-        return res.getString(resId);
-    }
-
-    public int getTypeInt() {
-        switch (type) {
-            case Created:
-                return 0;
-            case Updated:
-                return 1;
-            case Replicated:
-                return 2;
-            case Translated:
-                return 3;
-            default:
-                return -1;
-        }
-    }
-
     public void setType(Type type) {
         this.type = type;
     }
 
     public void setType(int num) {
-        Type val = Type.Created;
+        Type val = Type.CREATE;
         switch (num) {
             case 1:
-                val = Type.Updated;
+                val = Type.UPDATE;
                 break;
             case 2:
-                val = Type.Replicated;
+                val = Type.REPLICATE;
                 break;
             case 3:
-                val = Type.Translated;
+                val = Type.TRANSLATE;
                 break;
             default:
                 break;
@@ -112,7 +89,10 @@ public class History extends AbsData<History> implements Serializable {
     }
 
     public String getAbstraction(Resources res) {
-        return String.format(res.getString(R.string.abstract_format), author.getName(), article.getTitle(), getTypeString(res));
+        return String.format(res.getString(R.string.abstract_format),
+                author.getName(),
+                article.getTitle(),
+                res.getString(type.stringRes));
     }
 
     @Override
@@ -138,7 +118,7 @@ public class History extends AbsData<History> implements Serializable {
 
     @Override
     public void write(ContentValues values) {
-        values.put("type", getTypeInt());
+        values.put("type", type.value);
         values.put("author_id", author.getId());
         values.put("article_id", article.getId());
         values.put("updated_time", time);

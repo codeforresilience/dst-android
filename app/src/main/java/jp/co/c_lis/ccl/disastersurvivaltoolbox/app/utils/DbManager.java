@@ -97,25 +97,25 @@ public class DbManager extends SQLiteOpenHelper {
         Article article5 = addDummyArticle5(db);
 
         History history1 = new History();
-        history1.setType(History.Type.Translated);
+        history1.setType(History.Type.TRANSLATE);
         history1.setArticle(article1);
         history1.setAuthor(authorList.get(3));
         history1.insert(db);
 
         History history2 = new History();
-        history2.setType(History.Type.Replicated);
+        history2.setType(History.Type.REPLICATE);
         history2.setArticle(article2);
         history2.setAuthor(authorList.get(2));
         history2.insert(db);
 
         History history3 = new History();
-        history3.setType(History.Type.Created);
+        history3.setType(History.Type.CREATE);
         history3.setArticle(article3);
         history3.setAuthor(authorList.get(1));
         history3.insert(db);
 
         History history4 = new History();
-        history4.setType(History.Type.Updated);
+        history4.setType(History.Type.UPDATE);
         history4.setArticle(article4);
         history4.setAuthor(authorList.get(0));
         history4.insert(db);

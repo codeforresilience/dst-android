@@ -34,10 +34,14 @@ import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.MediaUtils;
 public class ArticleEditActivity extends ActionBarActivity implements
         ActionBar.TabListener, TextWatcher,
         SummaryEditorFragment.Listener,
-        ColumnEditorFragment.Listener {
+        ColumnEditorFragment.Listener,
+        ColumnTranslateFragment.Listener,
+        SummaryTranslateFragment.Listener {
     private static final String TAG = "ArticleEditActivity";
 
     public static final String KEY_ARTICLE = "article";
+
+    private History.Type mType = History.Type.CREATE;
 
     private Article mArticle;
 
@@ -46,6 +50,16 @@ public class ArticleEditActivity extends ActionBarActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String className = getIntent().getComponent().getClassName();
+
+        if (className.lastIndexOf(".ArticleUpdateActivity") > -1) {
+            mType = History.Type.UPDATE;
+        } else if (className.lastIndexOf(".ArticleReplicateActivity") > -1) {
+            mType = History.Type.REPLICATE;
+        } else if (className.lastIndexOf(".ArticleTranslateActivity") > -1) {
+            mType = History.Type.TRANSLATE;
+        }
 
         ActionBar ab = getSupportActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -61,7 +75,11 @@ public class ArticleEditActivity extends ActionBarActivity implements
         ActionBar.Tab summaryTag = ab.newTab()
                 .setText(R.string.summary)
                 .setTabListener(this);
-        summaryTag.setTag(SummaryEditorFragment.newInstance(mArticle));
+        if (mType == History.Type.TRANSLATE) {
+            summaryTag.setTag(SummaryTranslateFragment.newInstance(mArticle, mType));
+        } else {
+            summaryTag.setTag(SummaryEditorFragment.newInstance(mArticle, mType));
+        }
         ab.addTab(summaryTag, true);
 
         for (Article.Column column : mArticle.getColumns()) {
@@ -69,35 +87,42 @@ public class ArticleEditActivity extends ActionBarActivity implements
                     .setText(column.getTitle())
                     .setTabListener(this);
 
-            Fragment fragment = ColumnEditorFragment.newInstance(column);
-            tab.setTag(fragment);
-
+            if (mType == History.Type.TRANSLATE) {
+                tab.setTag(ColumnTranslateFragment.newInstance(column));
+            } else {
+                tab.setTag(ColumnEditorFragment.newInstance(column));
+            }
             ab.addTab(tab);
         }
 
-        mAddTag = ab.newTab()
-                .setIcon(android.R.drawable.ic_input_add)
-                .setTabListener(new ActionBar.TabListener() {
-                    @Override
-                    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-                        final ActionBar.Tab newTab = newColumn();
-                        sHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                getSupportActionBar().selectTab(newTab);
-                            }
-                        }, 100);
-                    }
+        if (mType != History.Type.TRANSLATE) {
+            mAddTag = ab.newTab()
+                    .setIcon(android.R.drawable.ic_input_add)
+                    .setTabListener(new ActionBar.TabListener() {
+                        @Override
+                        public void onTabSelected(ActionBar.Tab tab,
+                                                  FragmentTransaction fragmentTransaction) {
+                            final ActionBar.Tab newTab = newColumn();
+                            sHandler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    getSupportActionBar().selectTab(newTab);
+                                }
+                            }, 100);
+                        }
 
-                    @Override
-                    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-                    }
+                        @Override
+                        public void onTabUnselected(ActionBar.Tab tab,
+                                                    FragmentTransaction fragmentTransaction) {
+                        }
 
-                    @Override
-                    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-                    }
-                });
-        ab.addTab(mAddTag, false);
+                        @Override
+                        public void onTabReselected(ActionBar.Tab tab,
+                                                    FragmentTransaction fragmentTransaction) {
+                        }
+                    });
+            ab.addTab(mAddTag, false);
+        }
 
         setContentView(R.layout.activity_article);
 
@@ -190,20 +215,20 @@ public class ArticleEditActivity extends ActionBarActivity implements
 
         if (mArticle.getId() == -1) {
             mArticle.insert(mDb);
-            history.setType(History.Type.Created);
-        } else if (getIntent().getComponent().getClassName().lastIndexOf(".ArticleUpdateActivity") > -1) {
+
+        } else if (mType == History.Type.UPDATE) {
             mArticle.update(mDb);
-            history.setType(History.Type.Updated);
-        } else if (getIntent().getComponent().getClassName().lastIndexOf(".ArticleReplicateActivity") > -1) {
+
+        } else if (mType == History.Type.REPLICATE) {
             mArticle.setParentId(mArticle.getId());
             mArticle.insert(mDb);
-            history.setType(History.Type.Replicated);
-        } else if (getIntent().getComponent().getClassName().lastIndexOf(".ArticleTranslateActivity") > -1) {
+
+        } else if (mType == History.Type.TRANSLATE) {
             mArticle.setParentId(mArticle.getId());
             mArticle.insert(mDb);
-            history.setType(History.Type.Translated);
         }
 
+        history.setType(mType);
         history.insert(mDb);
 
         return true;
@@ -280,7 +305,9 @@ public class ArticleEditActivity extends ActionBarActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && mEditorFragment != null) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE
+                && resultCode == RESULT_OK
+                && mEditorFragment != null) {
             final File tmp = new File(fileUri.getPath());
             final File file = new File(getCacheDir(), tmp.getName());
 

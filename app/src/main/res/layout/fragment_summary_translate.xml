@@ -1,0 +1,146 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.MainActivity$PlaceholderFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/base"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rectangle"
+            android:layout_marginBottom="5dp">
+
+            <Spinner
+                android:id="@+id/sp_language"
+                android:enabled="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_title"
+                android:hint="Title"
+                android:enabled="false"
+                android:layout_below="@id/sp_language"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ImageButton
+                android:id="@+id/ib_camera"
+                android:src="@android:drawable/ic_menu_camera"
+                android:enabled="false"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_below="@id/et_title"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"
+                android:background="@null"
+                android:layout_width="128dp"
+                android:layout_height="128dp" />
+
+            <EditText
+                android:id="@+id/et_description"
+                android:layout_marginTop="12dp"
+                android:hint="Summary"
+                android:layout_below="@id/ib_camera"
+                android:enabled="false"
+                android:gravity="top"
+                android:layout_width="match_parent"
+                android:layout_height="120dp" />
+
+            <EditText
+                android:id="@+id/et_source"
+                android:layout_marginTop="12dp"
+                android:hint="Source (optional)"
+                android:layout_below="@id/et_description"
+                android:enabled="false"
+                android:singleLine="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_source_url"
+                android:layout_marginTop="12dp"
+                android:hint="Source URL (optional)"
+                android:layout_below="@id/et_source"
+                android:enabled="false"
+                android:singleLine="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/translate"
+            android:layout_below="@id/base"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_rectangle"
+            android:layout_marginTop="5dp">
+
+            <Spinner
+                android:id="@+id/sp_language2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_title2"
+                android:hint="Title"
+                android:layout_below="@id/sp_language2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ImageButton
+                android:id="@+id/ib_camera2"
+                android:src="@android:drawable/ic_menu_camera"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="12dp"
+                android:layout_below="@id/et_title2"
+                android:layout_centerHorizontal="true"
+                android:scaleType="fitCenter"
+                android:background="@null"
+                android:layout_width="128dp"
+                android:layout_height="128dp">
+
+                <requestFocus />
+            </ImageButton>
+
+            <EditText
+                android:id="@+id/et_description2"
+                android:layout_marginTop="12dp"
+                android:hint="Summary"
+                android:layout_below="@id/ib_camera2"
+                android:gravity="top"
+                android:layout_width="match_parent"
+                android:layout_height="120dp" />
+
+            <EditText
+                android:id="@+id/et_source2"
+                android:layout_marginTop="12dp"
+                android:hint="Source (optional)"
+                android:layout_below="@id/et_description2"
+                android:singleLine="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/et_source_url2"
+                android:layout_marginTop="12dp"
+                android:hint="Source URL (optional)"
+                android:layout_below="@id/et_source2"
+                android:singleLine="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+    </LinearLayout>
+</ScrollView>

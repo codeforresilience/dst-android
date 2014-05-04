@@ -13,14 +13,11 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
@@ -28,7 +25,7 @@ import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
 
-public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragment.Listener>
+public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslateFragment.Listener>
         implements View.OnClickListener,
         CompoundButton.OnCheckedChangeListener,
         AdapterView.OnItemSelectedListener {
@@ -93,8 +90,8 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
 
     private Article article;
 
-    public static SummaryEditorFragment newInstance(Article article, History.Type type) {
-        SummaryEditorFragment fragment = new SummaryEditorFragment();
+    public static SummaryTranslateFragment newInstance(Article article, History.Type type) {
+        SummaryTranslateFragment fragment = new SummaryTranslateFragment();
         fragment.setRetainInstance(true);
 
         Bundle args = new Bundle();
@@ -104,7 +101,7 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
         return fragment;
     }
 
-    public SummaryEditorFragment() {
+    public SummaryTranslateFragment() {
     }
 
     private SQLiteDatabase mDb;
@@ -112,41 +109,20 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
 
     private Handler mHandler = new Handler();
 
-    private List<DisasterType> mDisasterTypeList = new ArrayList<DisasterType>();
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
         mDb = new DbManager(activity, DbManager.FILE_NAME, null).getWritableDatabase();
         textWatcher = (TextWatcher) activity;
-
-        Thread th = new Thread() {
-            @Override
-            public void run() {
-                super.run();
-
-                mDisasterTypeList.clear();
-                new DisasterType().findAll(mDb, mDisasterTypeList);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        disasterTypeAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
-        };
-        th.start();
-
     }
 
-    private DisasterTypeAdapter disasterTypeAdapter;
 
-    private EditText title;
-    private EditText abstraction;
-    private EditText source;
-    private EditText sourceUrl;
-    private ImageButton image;
+    private EditText title2;
+    private EditText abstraction2;
+    private EditText source2;
+    private EditText sourceUrl2;
+    private ImageButton image2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -157,27 +133,47 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
         new Article.ArticleDisasterType()
                 .findByArticleId(article.getId(), article.getDisasterTypes(), mDb);
 
-        View rootView = inflater.inflate(R.layout.fragment_summary_edit, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_summary_translate, container, false);
 
         Spinner spinner = (Spinner) rootView.findViewById(R.id.sp_language);
         spinner.setAdapter(new LanguageAdapter());
 
+        Spinner spinner2 = (Spinner) rootView.findViewById(R.id.sp_language2);
+        spinner2.setAdapter(new LanguageAdapter());
+        spinner2.setOnItemSelectedListener(this);
+
         int localeIndex = getLocaleIndex(LOCALES, article.getLanguage());
         spinner.setSelection(localeIndex);
+        spinner2.setSelection(localeIndex);
 
-        spinner.setOnItemSelectedListener(this);
-
-        title = (EditText) rootView.findViewById(R.id.et_title);
+        TextView title = (EditText) rootView.findViewById(R.id.et_title);
         title.setText(article.getTitle());
-        title.addTextChangedListener(textWatcher);
 
-        disasterTypeAdapter = new DisasterTypeAdapter(getActivity(), this, mDisasterTypeList,
-                article.getDisasterTypes());
+        ImageButton image = (ImageButton) rootView.findViewById(R.id.ib_camera);
 
-        GridView gridView = (GridView) rootView.findViewById(R.id.gv_disaster_types);
-        gridView.setAdapter(disasterTypeAdapter);
+        EditText abstraction = (EditText) rootView.findViewById(R.id.et_description);
+        abstraction.setText(article.getAbstaction());
 
-        image = (ImageButton) rootView.findViewById(R.id.ib_camera);
+        EditText source = (EditText) rootView.findViewById(R.id.et_source);
+        source.setText(article.getSource());
+
+        EditText sourceUrl = (EditText) rootView.findViewById(R.id.et_source_url);
+        sourceUrl.setText(article.getSourceUrl());
+
+        title2 = (EditText) rootView.findViewById(R.id.et_title2);
+        title2.addTextChangedListener(textWatcher);
+
+        image2 = (ImageButton) rootView.findViewById(R.id.ib_camera2);
+        image2.setOnClickListener(this);
+
+        abstraction2 = (EditText) rootView.findViewById(R.id.et_description2);
+
+        source2 = (EditText) rootView.findViewById(R.id.et_source2);
+        source2.setText(article.getSource());
+
+        sourceUrl2 = (EditText) rootView.findViewById(R.id.et_source_url2);
+        sourceUrl2.setText(article.getSourceUrl());
+
 
         if (article.getImage() != null) {
             new ImageLoadTask() {
@@ -191,17 +187,19 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
 
             }.execute(new ImageLoadTask.Container(image,
                     new File(getActivity().getCacheDir(), article.getImage())));
+
+            new ImageLoadTask() {
+                @Override
+                protected Bitmap doInBackground(Container... params) {
+                    if (article.getImage() != null) {
+                        return super.doInBackground(params);
+                    }
+                    return null;
+                }
+
+            }.execute(new ImageLoadTask.Container(image2,
+                    new File(getActivity().getCacheDir(), article.getImage())));
         }
-        image.setOnClickListener(this);
-
-        abstraction = (EditText) rootView.findViewById(R.id.et_description);
-        abstraction.setText(article.getAbstaction());
-
-        source = (EditText) rootView.findViewById(R.id.et_source);
-        sourceUrl = (EditText) rootView.findViewById(R.id.et_source_url);
-
-        source.setText(article.getSource());
-        sourceUrl.setText(article.getSourceUrl());
 
         return rootView;
     }
@@ -213,10 +211,10 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
 
     @Override
     public void publish() {
-        article.setTitle(title.getText().toString());
-        article.setAbstaction(abstraction.getText().toString());
-        article.setSource(source.getText().toString());
-        article.setSourceUrl(sourceUrl.getText().toString());
+        article.setTitle(title2.getText().toString());
+        article.setAbstaction(abstraction2.getText().toString());
+        article.setSource(source2.getText().toString());
+        article.setSourceUrl(sourceUrl2.getText().toString());
 
     }
 
@@ -227,7 +225,7 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
 
     @Override
     public void setImageBitmap(Bitmap bitmap) {
-        image.setImageBitmap(bitmap);
+        image2.setImageBitmap(bitmap);
     }
 
     @Override
