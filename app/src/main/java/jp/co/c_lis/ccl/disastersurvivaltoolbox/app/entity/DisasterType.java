@@ -3,9 +3,11 @@ package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import java.io.Serializable;
+
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.R;
 
-public class DisasterType extends AbsData<DisasterType> {
+public class DisasterType extends AbsData<DisasterType> implements Serializable {
 
     public static final DisasterType EARTHQUAKE = new DisasterType(
             0, R.drawable.disaster_type_earthquake, "地震", "Earthquake");

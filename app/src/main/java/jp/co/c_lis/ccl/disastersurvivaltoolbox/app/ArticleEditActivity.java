@@ -32,7 +32,9 @@ import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.FileUtils;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.MediaUtils;
 
 public class ArticleEditActivity extends ActionBarActivity implements
-        ActionBar.TabListener, TextWatcher, ColumnEditorFragment.Listener {
+        ActionBar.TabListener, TextWatcher,
+        SummaryEditorFragment.Listener,
+        ColumnEditorFragment.Listener {
     private static final String TAG = "ArticleEditActivity";
 
     public static final String KEY_ARTICLE = "article";
@@ -211,14 +213,14 @@ public class ArticleEditActivity extends ActionBarActivity implements
         // do nothing
     }
 
-    private ColumnEditorFragment mColumnEditorFragment;
+    private BaseEditorFragment mEditorFragment;
     private Uri fileUri;
 
     private static final int REQUEST_IMAGE_CAPTURE = 0x01;
 
     @Override
-    public void onTakePictureClicked(ColumnEditorFragment fragment) {
-        mColumnEditorFragment = fragment;
+    public void onTakePictureClicked(BaseEditorFragment fragment) {
+        mEditorFragment = fragment;
 
         fileUri = MediaUtils.getOutputMediaFileUri();
 
@@ -234,7 +236,7 @@ public class ArticleEditActivity extends ActionBarActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && mColumnEditorFragment != null) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK && mEditorFragment != null) {
             final File tmp = new File(fileUri.getPath());
             final File file = new File(getCacheDir(), tmp.getName());
 
@@ -243,14 +245,14 @@ public class ArticleEditActivity extends ActionBarActivity implements
                 public void run() {
                     try {
                         FileUtils.copy(tmp, file);
-                        mColumnEditorFragment.getColumn().setImage(file.getName());
+                        mEditorFragment.setImage(file.getName());
 
                         final Bitmap imageBitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mColumnEditorFragment.setImageBitmap(imageBitmap);
-                                mColumnEditorFragment = null;
+                                mEditorFragment.setImageBitmap(imageBitmap);
+                                mEditorFragment = null;
                                 fileUri = null;
                             }
                         });

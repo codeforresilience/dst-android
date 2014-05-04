@@ -1,6 +1,5 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +12,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
 
-public class HomeFragment extends AbsFragment<HomeFragmentListener> implements AdapterView.OnItemClickListener {
+public class HomeFragment extends AbsFragment<HomeFragmentListener>
+        implements AdapterView.OnItemClickListener {
     private static final String TAG = "HomeFragment";
 
     private ListView mHistoryView;
@@ -73,16 +72,18 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener> implements A
             TextView title = (TextView) convertView.findViewById(R.id.tv_title);
             title.setText(history.getAbstraction(getResources()));
 
-            ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
+            final ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
             String imagePath = history.getArticle().getImage();
             if (imagePath != null) {
-                thumbnail.setVisibility(View.VISIBLE);
-                File imageFile = new File(getActivity().getCacheDir(), history.getArticle().getImage());
-                thumbnail.setImageBitmap(BitmapFactory.decodeFile(imageFile.getAbsolutePath()));
+                thumbnail.setVisibility(View.INVISIBLE);
+                File imageFile = new File(getActivity().getCacheDir(), imagePath);
+
+                new ImageLoadTask().execute(new ImageLoadTask.Container(thumbnail, imageFile));
 
             } else {
                 thumbnail.setVisibility(View.GONE);
             }
+
             TextView likeCount = (TextView) convertView.findViewById(R.id.tv_like_count);
             likeCount.setText(String.valueOf(history.getArticle().getLikeCount()));
 

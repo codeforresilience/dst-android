@@ -2,6 +2,7 @@ package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextWatcher;
@@ -12,6 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ToggleButton;
 
 import java.util.ArrayList;
@@ -21,8 +23,8 @@ import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
 
-public class SummaryEditorFragment extends BaseEditorFragment
-        implements CompoundButton.OnCheckedChangeListener {
+public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragment.Listener>
+        implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private static final String KEY_ARTICLE = "article";
 
@@ -76,6 +78,7 @@ public class SummaryEditorFragment extends BaseEditorFragment
 
     private EditText title;
     private EditText abstraction;
+    private ImageButton image;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -90,9 +93,22 @@ public class SummaryEditorFragment extends BaseEditorFragment
         GridView gridView = (GridView) rootView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(disasterTypeAdapter);
 
+        ImageButton ib = (ImageButton) rootView.findViewById(R.id.ib_camera);
+        ib.setOnClickListener(this);
+
+        if (image != null) {
+            ib.setImageDrawable(image.getDrawable());
+        }
+        image = ib;
+
         abstraction = (EditText) rootView.findViewById(R.id.et_description);
 
         return rootView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        listener.onTakePictureClicked(this);
     }
 
     @Override
@@ -100,6 +116,16 @@ public class SummaryEditorFragment extends BaseEditorFragment
         article.setTitle(title.getText().toString());
         article.setAbstaction(abstraction.getText().toString());
 
+    }
+
+    @Override
+    public void setImage(String fileName) {
+        article.setImage(fileName);
+    }
+
+    @Override
+    public void setImageBitmap(Bitmap bitmap) {
+        image.setImageBitmap(bitmap);
     }
 
     private List<DisasterType> mDisasterTypeList = new ArrayList<DisasterType>();
@@ -150,6 +176,9 @@ public class SummaryEditorFragment extends BaseEditorFragment
 
             return view;
         }
+    }
+
+    public interface Listener extends BaseEditorFragment.Listener {
     }
 
 }

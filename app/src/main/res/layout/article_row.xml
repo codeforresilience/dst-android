@@ -33,10 +33,9 @@
         <ImageView
             android:id="@+id/iv_image"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="150dp"
             android:layout_below="@id/tv_description"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/ic_launcher" />
+            android:layout_alignParentLeft="true" />
 
         <include
             android:layout_width="wrap_content"

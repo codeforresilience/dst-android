@@ -2,7 +2,9 @@ package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -21,7 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -186,14 +188,14 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
             TextView description = (TextView) convertView.findViewById(R.id.tv_description);
             description.setText(article.getAbstaction());
 
-            ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
-            if (article.getImage() != null) {
-                thumbnail.setVisibility(View.VISIBLE);
-                try {
-                    thumbnail.setImageBitmap(BitmapFactory.decodeStream(
-                            getActivity().getAssets().open(article.getImage())));
-                } catch (IOException e) {
-                }
+            final ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
+            String imagePath = article.getImage();
+            if (imagePath != null) {
+                thumbnail.setVisibility(View.INVISIBLE);
+                File imageFile = new File(getActivity().getCacheDir(), imagePath);
+
+                new ImageLoadTask().execute(new ImageLoadTask.Container(thumbnail, imageFile));
+
             } else {
                 thumbnail.setVisibility(View.GONE);
             }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import android.widget.ImageButton;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 
-public class ColumnEditorFragment extends BaseEditorFragment implements View.OnClickListener {
+public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragment.Listener> implements View.OnClickListener {
     private static final String TAG = "ColumnEditorFragment";
 
     private static final String KEY_COLUMN = "column";
@@ -42,7 +41,6 @@ public class ColumnEditorFragment extends BaseEditorFragment implements View.OnC
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        listener = (Listener) activity;
         textWatcher = (TextWatcher) activity;
     }
 
@@ -78,8 +76,14 @@ public class ColumnEditorFragment extends BaseEditorFragment implements View.OnC
         return rootView;
     }
 
+    @Override
     public void setImageBitmap(Bitmap bitmap) {
         image.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void setImage(String fileName) {
+        column.setImage(fileName);
     }
 
     @Override
@@ -93,10 +97,6 @@ public class ColumnEditorFragment extends BaseEditorFragment implements View.OnC
         listener.onTakePictureClicked(this);
     }
 
-    private Listener listener;
-
-    public interface Listener {
-        public void onTakePictureClicked(ColumnEditorFragment fragment);
+    public interface Listener extends BaseEditorFragment.Listener {
     }
-
 }
