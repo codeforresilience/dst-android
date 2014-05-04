@@ -173,7 +173,7 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
         GridView gridView = (GridView) rootView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(disasterTypeAdapter);
 
-        final ImageButton ib = (ImageButton) rootView.findViewById(R.id.ib_camera);
+        image = (ImageButton) rootView.findViewById(R.id.ib_camera);
 
         if (article.getImage() != null) {
             new ImageLoadTask() {
@@ -185,18 +185,9 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
                     return null;
                 }
 
-                @Override
-                protected void onPostExecute(Bitmap bitmap) {
-                    super.onPostExecute(bitmap);
-
-                    if (image != null) {
-                        ib.setImageDrawable(image.getDrawable());
-                    }
-                    image = ib;
-                }
-            }.execute(new ImageLoadTask.Container(ib, new File(getActivity().getCacheDir(), article.getImage())));
+            }.execute(new ImageLoadTask.Container(image, new File(getActivity().getCacheDir(), article.getImage())));
         }
-        ib.setOnClickListener(this);
+        image.setOnClickListener(this);
 
         abstraction = (EditText) rootView.findViewById(R.id.et_description);
         abstraction.setText(article.getAbstaction());
