@@ -191,9 +191,13 @@ public class ArticleEditActivity extends ActionBarActivity implements
         if (mArticle.getId() == -1) {
             mArticle.insert(mDb);
             history.setType(History.Type.Created);
-        } else {
+        } else if (getIntent().getComponent().getClassName().lastIndexOf(".ArticleUpdateActivity") > -1) {
             mArticle.update(mDb);
             history.setType(History.Type.Updated);
+        } else if (getIntent().getComponent().getClassName().lastIndexOf(".ArticleReplicateActivity") > -1) {
+            mArticle.setParentId(mArticle.getId());
+            mArticle.insert(mDb);
+            history.setType(History.Type.Replicated);
         }
 
         history.insert(mDb);

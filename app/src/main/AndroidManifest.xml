@@ -40,6 +40,13 @@
             android:icon="@drawable/ic_update"
             android:screenOrientation="nosensor" />
 
+        <activity-alias
+            android:name=".ArticleReplicateActivity"
+            android:targetActivity=".ArticleEditActivity"
+            android:label="@string/app_name"
+            android:icon="@drawable/ic_replicate"
+            android:screenOrientation="nosensor" />
+
     </application>
 
 </manifest>

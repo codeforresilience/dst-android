@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -85,10 +84,13 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_update) {
-            Log.d(TAG, "article_id = " + mArticle.getId());
-
             Intent intent = new Intent();
             intent.setClassName(getPackageName(), getPackageName() + ".ArticleUpdateActivity");
+            intent.putExtra(ArticleEditActivity.KEY_ARTICLE, mArticle);
+            startActivity(intent);
+        } else if (id == R.id.action_replicate) {
+            Intent intent = new Intent();
+            intent.setClassName(getPackageName(), getPackageName() + ".ArticleReplicateActivity");
             intent.putExtra(ArticleEditActivity.KEY_ARTICLE, mArticle);
             startActivity(intent);
         }
