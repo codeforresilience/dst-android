@@ -6,15 +6,15 @@
     tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.MainActivity$PlaceholderFragment">
 
     <ImageView
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="@dimen/like_button_size"
+        android:layout_height="@dimen/like_button_size"
         android:layout_marginRight="5dp"
         android:src="@drawable/ic_like" />
 
     <TextView
         android:id="@+id/tv_like_count"
         android:layout_width="wrap_content"
-        android:layout_height="25dp"
+        android:layout_height="@dimen/like_button_size"
         android:gravity="center_vertical"
         android:text="10" />
 
