@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
+package net.survivalpad.android.entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;

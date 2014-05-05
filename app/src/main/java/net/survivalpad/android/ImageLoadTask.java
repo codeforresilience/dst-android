@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

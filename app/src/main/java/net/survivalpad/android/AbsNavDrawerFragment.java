@@ -1,10 +1,10 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
+import net.survivalpad.android.util.DbManager;
 
 public abstract class AbsNavDrawerFragment<T extends AbsNavDrawerFragment.IFragmentListener> extends Fragment {
 

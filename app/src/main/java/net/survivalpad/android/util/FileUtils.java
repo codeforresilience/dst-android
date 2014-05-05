@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils;
+package net.survivalpad.android.util;
 
 import java.io.File;
 import java.io.FileInputStream;

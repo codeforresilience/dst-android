@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -12,7 +12,7 @@ import android.widget.ImageButton;
 
 import java.io.File;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
+import net.survivalpad.android.entity.Article;
 
 public class ColumnTranslateFragment extends BaseEditorFragment<ColumnTranslateFragment.Listener>
         implements View.OnClickListener {

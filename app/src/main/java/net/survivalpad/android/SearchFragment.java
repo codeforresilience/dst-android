@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,8 +23,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
+import net.survivalpad.android.entity.Article;
+import net.survivalpad.android.entity.DisasterType;
 
 public class SearchFragment extends AbsNavDrawerFragment<SearchFragment.SearchFragmentListener>
         implements AdapterView.OnItemClickListener,

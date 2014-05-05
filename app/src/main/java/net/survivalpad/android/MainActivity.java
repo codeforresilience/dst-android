@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,13 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import net.survivalpad.android.entity.Article;
+import net.survivalpad.android.entity.History;
+import net.survivalpad.android.util.DbManager;
+import net.survivalpad.android.util.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
-
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.FileUtils;
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks,

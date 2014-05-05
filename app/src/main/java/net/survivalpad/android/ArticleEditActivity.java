@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.content.Context;
 import android.content.Intent;
@@ -30,12 +30,12 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Author;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.FileUtils;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.MediaUtils;
+import net.survivalpad.android.entity.Article;
+import net.survivalpad.android.entity.Author;
+import net.survivalpad.android.entity.History;
+import net.survivalpad.android.util.DbManager;
+import net.survivalpad.android.util.FileUtils;
+import net.survivalpad.android.util.MediaUtils;
 
 public class ArticleEditActivity extends ActionBarActivity implements
         ActionBar.TabListener, LoaderManager.LoaderCallbacks<Article>, TextWatcher,

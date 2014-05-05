@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.app.Activity;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
+import net.survivalpad.android.entity.Article;
+import net.survivalpad.android.entity.DisasterType;
+import net.survivalpad.android.entity.History;
+import net.survivalpad.android.util.DbManager;
 
 public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragment.Listener>
         implements View.OnClickListener,

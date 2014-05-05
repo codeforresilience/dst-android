@@ -1,8 +1,8 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils;
+package net.survivalpad.android.util;
 
 import java.util.List;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
+import net.survivalpad.android.entity.DisasterType;
 
 public class Utils {
 

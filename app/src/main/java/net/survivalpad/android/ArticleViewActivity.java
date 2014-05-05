@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,8 +24,8 @@ import android.widget.TextView;
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
+import net.survivalpad.android.entity.Article;
+import net.survivalpad.android.util.DbManager;
 
 public class ArticleViewActivity extends ActionBarActivity
         implements ActionBar.TabListener, LoaderManager.LoaderCallbacks<Article> {

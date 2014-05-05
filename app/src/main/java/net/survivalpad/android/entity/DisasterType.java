@@ -1,13 +1,11 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
+package net.survivalpad.android.entity;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+
+import net.survivalpad.android.R;
 
 import java.io.Serializable;
-import java.util.List;
-
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.R;
 
 public class DisasterType extends AbsData<DisasterType> implements Serializable {
 

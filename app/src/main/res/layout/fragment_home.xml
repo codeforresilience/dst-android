@@ -5,4 +5,4 @@
     android:layout_height="match_parent"
     android:dividerHeight="0dp"
     android:divider="@null"
-    tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.MainActivity$PlaceholderFragment" />
+    tools:context="net.survivalpad.android.MainActivity$PlaceholderFragment" />

@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils;
+package net.survivalpad.android.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Author;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
+import net.survivalpad.android.entity.Article;
+import net.survivalpad.android.entity.Author;
+import net.survivalpad.android.entity.DisasterType;
+import net.survivalpad.android.entity.History;
 
 public class DbManager extends SQLiteOpenHelper {
 

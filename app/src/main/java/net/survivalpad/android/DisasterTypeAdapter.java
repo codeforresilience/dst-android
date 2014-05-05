@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.content.Context;
 import android.view.View;
@@ -10,8 +10,8 @@ import android.widget.ToggleButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.Utils;
+import net.survivalpad.android.entity.DisasterType;
+import net.survivalpad.android.util.Utils;
 
 class DisasterTypeAdapter extends BaseAdapter implements CompoundButton.OnCheckedChangeListener {
 

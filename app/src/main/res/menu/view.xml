@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="jp.co.c_lis.ccl.disastersurvivaltoolbox.app.MainActivity" >
+    tools:context="net.survivalpad.android.MainActivity" >
     <item android:id="@+id/action_add"
         android:icon="@android:drawable/ic_input_add"
         android:title="Add"

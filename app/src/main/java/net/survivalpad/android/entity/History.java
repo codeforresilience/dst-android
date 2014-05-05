@@ -1,14 +1,14 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity;
+package net.survivalpad.android.entity;
 
 import android.content.ContentValues;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import net.survivalpad.android.R;
+
 import java.io.Serializable;
 import java.util.List;
-
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.R;
 
 /**
  * 変更履歴クラス

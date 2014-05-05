@@ -1,4 +1,4 @@
-package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
+package net.survivalpad.android;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
+import net.survivalpad.android.entity.History;
 
 public class HomeFragment extends AbsNavDrawerFragment<HomeFragment.HomeFragmentListener>
         implements AdapterView.OnItemClickListener {
