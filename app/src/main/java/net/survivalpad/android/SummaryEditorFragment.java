@@ -18,15 +18,15 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import net.survivalpad.android.entity.Article;
 import net.survivalpad.android.entity.DisasterType;
 import net.survivalpad.android.entity.History;
 import net.survivalpad.android.util.DbManager;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragment.Listener>
         implements View.OnClickListener,
@@ -151,11 +151,13 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        article = (Article) getArguments().getSerializable(KEY_ARTICLE);
 
-        article.getDisasterTypes().clear();
-        new Article.ArticleDisasterType()
-                .findByArticleId(article.getId(), article.getDisasterTypes(), mDb);
+        if (article == null) {
+            article = (Article) getArguments().getSerializable(KEY_ARTICLE);
+            article.getDisasterTypes().clear();
+            new Article.ArticleDisasterType()
+                    .findByArticleId(article.getId(), article.getDisasterTypes(), mDb);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_summary_edit, container, false);
 

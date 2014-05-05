@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import java.io.File;
-
 import net.survivalpad.android.entity.Article;
+
+import java.io.File;
 
 public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragment.Listener>
         implements View.OnClickListener {
@@ -52,8 +52,9 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_column_edit, container, false);
 
-        column = (Article.Column) getArguments().getSerializable(KEY_COLUMN);
         if (column == null) {
+            column = (Article.Column) getArguments().getSerializable(KEY_COLUMN);
+        } else {
             column = new Article.Column();
         }
 
