@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * TODO: 画面回転時に既に入力している情報を保存
+ */
 public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragment.Listener>
         implements View.OnClickListener,
         CompoundButton.OnCheckedChangeListener,
@@ -171,7 +174,23 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
 
         title = (EditText) rootView.findViewById(R.id.et_title);
         title.setText(article.getTitle());
-        title.addTextChangedListener(textWatcher);
+
+        /*
+         * FIXME イベントの設定タイミング
+         * この時点でTextWatcherを設定すると、画面の回転時にonTextChangedが発生して、
+         * ActionBar関係の処理でNullPointerExceptionが発生する。
+         *
+         * そのため、onFocusのみを監視して、実際のTextWatcher設定を遅延している。
+         */
+        title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && textWatcher != null) {
+                    title.addTextChangedListener(textWatcher);
+                    textWatcher = null;
+                }
+            }
+        });
 
         disasterTypeAdapter = new DisasterTypeAdapter(getActivity(), this, mDisasterTypeList,
                 article.getDisasterTypes());

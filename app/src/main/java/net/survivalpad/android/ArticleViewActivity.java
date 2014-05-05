@@ -56,7 +56,6 @@ public class ArticleViewActivity extends ActionBarActivity
         ActionBar ab = getSupportActionBar();
 
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        ab.removeAllTabs();
     }
 
     @Override
@@ -161,6 +160,7 @@ public class ArticleViewActivity extends ActionBarActivity
 
         private void setupUi(Article article) {
             ActionBar ab = activity.get().getSupportActionBar();
+            ab.removeAllTabs();
             ab.setTitle(article.getTitle());
 
             ActionBar.Tab tab = ab.newTab()

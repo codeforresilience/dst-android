@@ -10,10 +10,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import java.io.File;
-
 import net.survivalpad.android.entity.Article;
 
+import java.io.File;
+
+/**
+ * TODO: 画面回転時に既に入力している情報を保存
+ */
 public class ColumnTranslateFragment extends BaseEditorFragment<ColumnTranslateFragment.Listener>
         implements View.OnClickListener {
     private static final String TAG = "ColumnEditorFragment";
@@ -43,8 +46,6 @@ public class ColumnTranslateFragment extends BaseEditorFragment<ColumnTranslateF
         textWatcher = (TextWatcher) activity;
     }
 
-    String imageFileName;
-
     private EditText title2;
     private EditText description2;
     private ImageButton image2;
@@ -54,16 +55,31 @@ public class ColumnTranslateFragment extends BaseEditorFragment<ColumnTranslateF
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_column_translate, container, false);
 
-        column = (Article.Column) getArguments().getSerializable(KEY_COLUMN);
         if (column == null) {
-            column = new Article.Column();
+            column = (Article.Column) getArguments().getSerializable(KEY_COLUMN);
         }
 
         EditText title = (EditText) rootView.findViewById(R.id.et_title);
         title.setText(column.getTitle());
 
         title2 = (EditText) rootView.findViewById(R.id.et_title2);
-        title2.addTextChangedListener(textWatcher);
+
+        /*
+         * FIXME イベントの設定タイミング
+         * この時点でTextWatcherを設定すると、画面の回転時にonTextChangedが発生して、
+         * ActionBar関係の処理でNullPointerExceptionが発生する。
+         *
+         * そのため、onFocusのみを監視して、実際のTextWatcher設定を遅延している。
+         */
+        title2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && textWatcher != null) {
+                    title2.addTextChangedListener(textWatcher);
+                    textWatcher = null;
+                }
+            }
+        });
 
         EditText description = (EditText) rootView.findViewById(R.id.et_description);
         description.setText(column.getDescription());

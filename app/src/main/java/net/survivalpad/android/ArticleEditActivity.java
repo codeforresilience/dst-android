@@ -22,13 +22,9 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 import net.survivalpad.android.entity.Article;
 import net.survivalpad.android.entity.Author;
@@ -36,6 +32,12 @@ import net.survivalpad.android.entity.History;
 import net.survivalpad.android.util.DbManager;
 import net.survivalpad.android.util.FileUtils;
 import net.survivalpad.android.util.MediaUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArticleEditActivity extends ActionBarActivity implements
         ActionBar.TabListener, LoaderManager.LoaderCallbacks<Article>, TextWatcher,
@@ -80,6 +82,18 @@ public class ArticleEditActivity extends ActionBarActivity implements
     protected void onResume() {
         super.onResume();
         mDb = new DbManager(this, DbManager.FILE_NAME, null).getWritableDatabase();
+
+        /* IMEの表示を消す */
+        sHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                View view = getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                }
+            }
+        }, 50);
     }
 
     @Override
@@ -325,7 +339,6 @@ public class ArticleEditActivity extends ActionBarActivity implements
         }
 
         private void setupUi(Article article) {
-
             History.Type type = activity.get().mType;
 
             ActionBar ab = activity.get().getSupportActionBar();

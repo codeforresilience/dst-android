@@ -17,14 +17,17 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import java.io.File;
-import java.util.Locale;
-
 import net.survivalpad.android.entity.Article;
 import net.survivalpad.android.entity.DisasterType;
 import net.survivalpad.android.entity.History;
 import net.survivalpad.android.util.DbManager;
 
+import java.io.File;
+import java.util.Locale;
+
+/**
+ * TODO: 画面回転時に既に入力している情報を保存
+ */
 public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslateFragment.Listener>
         implements View.OnClickListener,
         CompoundButton.OnCheckedChangeListener,
@@ -117,7 +120,6 @@ public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslat
         textWatcher = (TextWatcher) activity;
     }
 
-
     private EditText title2;
     private EditText abstraction2;
     private EditText source2;
@@ -127,11 +129,13 @@ public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        article = (Article) getArguments().getSerializable(KEY_ARTICLE);
 
-        article.getDisasterTypes().clear();
-        new Article.ArticleDisasterType()
-                .findByArticleId(article.getId(), article.getDisasterTypes(), mDb);
+        if (article == null) {
+            article = (Article) getArguments().getSerializable(KEY_ARTICLE);
+            article.getDisasterTypes().clear();
+            new Article.ArticleDisasterType()
+                    .findByArticleId(article.getId(), article.getDisasterTypes(), mDb);
+        }
 
         View rootView = inflater.inflate(R.layout.fragment_summary_translate, container, false);
 
@@ -161,7 +165,23 @@ public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslat
         sourceUrl.setText(article.getSourceUrl());
 
         title2 = (EditText) rootView.findViewById(R.id.et_title2);
-        title2.addTextChangedListener(textWatcher);
+
+        /*
+         * FIXME イベントの設定タイミング
+         * この時点でTextWatcherを設定すると、画面の回転時にonTextChangedが発生して、
+         * ActionBar関係の処理でNullPointerExceptionが発生する。
+         *
+         * そのため、onFocusのみを監視して、実際のTextWatcher設定を遅延している。
+         */
+        title2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && textWatcher != null) {
+                    title2.addTextChangedListener(textWatcher);
+                    textWatcher = null;
+                }
+            }
+        });
 
         image2 = (ImageButton) rootView.findViewById(R.id.ib_camera2);
         image2.setOnClickListener(this);

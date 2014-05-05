@@ -14,6 +14,9 @@ import net.survivalpad.android.entity.Article;
 
 import java.io.File;
 
+/**
+ * TODO: 画面回転時に既に入力している情報を保存
+ */
 public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragment.Listener>
         implements View.OnClickListener {
     private static final String TAG = "ColumnEditorFragment";
@@ -54,13 +57,27 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
 
         if (column == null) {
             column = (Article.Column) getArguments().getSerializable(KEY_COLUMN);
-        } else {
-            column = new Article.Column();
         }
 
         title = (EditText) rootView.findViewById(R.id.et_title);
         title.setText(column.getTitle());
-        title.addTextChangedListener(textWatcher);
+
+        /*
+         * FIXME イベントの設定タイミング
+         * この時点でTextWatcherを設定すると、画面の回転時にonTextChangedが発生して、
+         * ActionBar関係の処理でNullPointerExceptionが発生する。
+         *
+         * そのため、onFocusのみを監視して、実際のTextWatcher設定を遅延している。
+         */
+        title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus && textWatcher != null) {
+                    title.addTextChangedListener(textWatcher);
+                    textWatcher = null;
+                }
+            }
+        });
 
         description = (EditText) rootView.findViewById(R.id.et_description);
         description.setText(column.getDescription());

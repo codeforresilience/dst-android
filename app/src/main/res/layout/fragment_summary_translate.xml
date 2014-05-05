@@ -91,16 +91,16 @@
                 android:hint="Title"
                 android:layout_below="@id/sp_language2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" >
+
+                <requestFocus />
+            </EditText>
 
             <ImageButton
                 android:id="@+id/ib_camera2"
                 android:layout_below="@id/et_title2"
                 android:layout_centerHorizontal="true"
-                style="@style/camera_button">
-
-                <requestFocus />
-            </ImageButton>
+                style="@style/camera_button" />
 
             <EditText
                 android:id="@+id/et_description2"
