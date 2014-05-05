@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
 
-public abstract class AbsFragment<T extends AbsFragment.IFragmentListener> extends Fragment {
+public abstract class AbsNavDrawerFragment<T extends AbsNavDrawerFragment.IFragmentListener> extends Fragment {
 
     public abstract CharSequence getTitle();
 

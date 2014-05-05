@@ -1,5 +1,6 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -7,9 +8,13 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
@@ -21,6 +26,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,27 +38,25 @@ import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.FileUtils;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.MediaUtils;
 
 public class ArticleEditActivity extends ActionBarActivity implements
-        ActionBar.TabListener, TextWatcher,
-        SummaryEditorFragment.Listener,
-        ColumnEditorFragment.Listener,
-        ColumnTranslateFragment.Listener,
-        SummaryTranslateFragment.Listener {
+        ActionBar.TabListener, LoaderManager.LoaderCallbacks<Article>, TextWatcher,
+        SummaryEditorFragment.Listener, SummaryTranslateFragment.Listener,
+        ColumnEditorFragment.Listener, ColumnTranslateFragment.Listener {
+
     private static final String TAG = "ArticleEditActivity";
 
-    public static final String KEY_ARTICLE = "article";
+    public static final String KEY_ARTICLE_ID = "article_id";
 
     private History.Type mType = History.Type.CREATE;
 
     private Article mArticle;
 
-    private ActionBar.Tab mAddTag;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String className = getIntent().getComponent().getClassName();
+        sHandler = new MyHandler(this);
 
+        String className = getIntent().getComponent().getClassName();
         if (className.lastIndexOf(".ArticleUpdateActivity") > -1) {
             mType = History.Type.UPDATE;
         } else if (className.lastIndexOf(".ArticleReplicateActivity") > -1) {
@@ -64,65 +68,7 @@ public class ArticleEditActivity extends ActionBarActivity implements
         ActionBar ab = getSupportActionBar();
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-        if (getIntent().hasExtra(KEY_ARTICLE)) {
-            mArticle = (Article) getIntent().getSerializableExtra(KEY_ARTICLE);
-            ab.setTitle(mArticle.getTitle());
-        } else {
-            mArticle = new Article();
-            ab.setTitle("New Article");
-        }
-
-        ActionBar.Tab summaryTag = ab.newTab()
-                .setText(R.string.summary)
-                .setTabListener(this);
-        if (mType == History.Type.TRANSLATE) {
-            summaryTag.setTag(SummaryTranslateFragment.newInstance(mArticle, mType));
-        } else {
-            summaryTag.setTag(SummaryEditorFragment.newInstance(mArticle, mType));
-        }
-        ab.addTab(summaryTag, true);
-
-        for (Article.Column column : mArticle.getColumns()) {
-            ActionBar.Tab tab = ab.newTab()
-                    .setText(column.getTitle())
-                    .setTabListener(this);
-
-            if (mType == History.Type.TRANSLATE) {
-                tab.setTag(ColumnTranslateFragment.newInstance(column));
-            } else {
-                tab.setTag(ColumnEditorFragment.newInstance(column));
-            }
-            ab.addTab(tab);
-        }
-
-        if (mType != History.Type.TRANSLATE) {
-            mAddTag = ab.newTab()
-                    .setIcon(android.R.drawable.ic_input_add)
-                    .setTabListener(new ActionBar.TabListener() {
-                        @Override
-                        public void onTabSelected(ActionBar.Tab tab,
-                                                  FragmentTransaction fragmentTransaction) {
-                            final ActionBar.Tab newTab = newColumn();
-                            sHandler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    getSupportActionBar().selectTab(newTab);
-                                }
-                            }, 100);
-                        }
-
-                        @Override
-                        public void onTabUnselected(ActionBar.Tab tab,
-                                                    FragmentTransaction fragmentTransaction) {
-                        }
-
-                        @Override
-                        public void onTabReselected(ActionBar.Tab tab,
-                                                    FragmentTransaction fragmentTransaction) {
-                        }
-                    });
-            ab.addTab(mAddTag, false);
-        }
+        getSupportLoaderManager().initLoader(0x0, getIntent().getExtras(), this);
 
         setContentView(R.layout.activity_article);
 
@@ -145,8 +91,6 @@ public class ArticleEditActivity extends ActionBarActivity implements
             mDb = null;
         }
     }
-
-    private static Handler sHandler = new Handler();
 
     private ActionBar.Tab newColumn() {
         Article.Column column = new Article.Column();
@@ -332,6 +276,132 @@ public class ArticleEditActivity extends ActionBarActivity implements
                 }
             };
             th.start();
+        }
+    }
+
+    @Override
+    public Loader<Article> onCreateLoader(int id, Bundle args) {
+        ArticleLoader loader = new ArticleLoader(this, args.getLong(KEY_ARTICLE_ID));
+        loader.forceLoad();
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Article> loader, Article data) {
+        mArticle = data;
+        sHandler.sendMessage(sHandler.obtainMessage(MyHandler.HANDLE_SETUP_ACTIONBAR, mArticle));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Article> loader) {
+        // do nothing
+    }
+
+    private static MyHandler sHandler;
+
+    private static class MyHandler extends Handler {
+        public static final int HANDLE_SETUP_ACTIONBAR = 0x01;
+
+        WeakReference<ArticleEditActivity> activity;
+
+        MyHandler(ArticleEditActivity activity) {
+            this.activity = new WeakReference<ArticleEditActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+                case HANDLE_SETUP_ACTIONBAR: {
+                    setupUi((Article) msg.obj);
+                    break;
+                }
+            }
+        }
+
+        private void setupUi(Article article) {
+
+            History.Type type = activity.get().mType;
+
+            ActionBar ab = activity.get().getSupportActionBar();
+            ab.setTitle(article.getTitle());
+
+            ActionBar.Tab summaryTag = ab.newTab()
+                    .setText(R.string.summary)
+                    .setTabListener(activity.get());
+            if (type == History.Type.TRANSLATE) {
+                summaryTag.setTag(SummaryTranslateFragment.newInstance(article, type));
+            } else {
+                summaryTag.setTag(SummaryEditorFragment.newInstance(article, type));
+            }
+            ab.addTab(summaryTag, true);
+
+            for (Article.Column column : article.getColumns()) {
+                ActionBar.Tab tab = ab.newTab()
+                        .setText(column.getTitle())
+                        .setTabListener(activity.get());
+
+                if (type == History.Type.TRANSLATE) {
+                    tab.setTag(ColumnTranslateFragment.newInstance(column));
+                } else {
+                    tab.setTag(ColumnEditorFragment.newInstance(column));
+                }
+                ab.addTab(tab);
+            }
+
+            if (type != History.Type.TRANSLATE) {
+                ActionBar.Tab addTab = ab.newTab()
+                        .setIcon(android.R.drawable.ic_input_add)
+                        .setTabListener(new ActionBar.TabListener() {
+                            @Override
+                            public void onTabSelected(ActionBar.Tab tab,
+                                                      FragmentTransaction fragmentTransaction) {
+                                final ActionBar.Tab newTab = activity.get().newColumn();
+                                sHandler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        activity.get().getSupportActionBar().selectTab(newTab);
+                                    }
+                                }, 100);
+                            }
+
+                            @Override
+                            public void onTabUnselected(ActionBar.Tab tab,
+                                                        FragmentTransaction fragmentTransaction) {
+                            }
+
+                            @Override
+                            public void onTabReselected(ActionBar.Tab tab,
+                                                        FragmentTransaction fragmentTransaction) {
+                            }
+                        });
+                ab.addTab(addTab, false);
+            }
+        }
+    }
+
+    private static class ArticleLoader extends AsyncTaskLoader<Article> {
+
+        private long articleId;
+
+        public ArticleLoader(Context context, long articleId) {
+            super(context);
+
+            this.articleId = articleId;
+        }
+
+        @Override
+        public Article loadInBackground() {
+            Article article = new Article();
+
+            if (articleId != -1) {
+                SQLiteDatabase db = new DbManager(getContext(), DbManager.FILE_NAME, null)
+                        .getReadableDatabase();
+                article.findById(articleId, db);
+                db.close();
+            }
+            return article;
         }
     }
 }

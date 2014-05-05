@@ -1,10 +1,15 @@
 package jp.co.c_lis.ccl.disastersurvivaltoolbox.app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -17,60 +22,41 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.utils.DbManager;
 
-public class ArticleViewActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class ArticleViewActivity extends ActionBarActivity
+        implements ActionBar.TabListener, LoaderManager.LoaderCallbacks<Article> {
     private static final String TAG = "ArticleViewActivity";
 
     public static final String KEY_ARTICLE_ID = "article_id";
 
-    private long mArticleId;
     private Article mArticle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mArticleId = getIntent().getLongExtra(KEY_ARTICLE_ID, -1);
+        sHandler = new MyHandler(this);
+
         setContentView(R.layout.activity_article);
+
+        getSupportLoaderManager().initLoader(0x0, getIntent().getExtras(), this);
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        mArticle = new Article();
-        if (mArticleId != -1) {
-            SQLiteDatabase db = new DbManager(this, DbManager.FILE_NAME, null).getReadableDatabase();
-            mArticle.findById(mArticleId, db);
-            db.close();
-        }
+        getSupportLoaderManager().restartLoader(0x0, getIntent().getExtras(), this);
 
         ActionBar ab = getSupportActionBar();
-        ab.setTitle(mArticle.getTitle());
 
         ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         ab.removeAllTabs();
-
-        ActionBar.Tab tab = ab.newTab()
-                .setText(R.string.summary)
-                .setTabListener(this);
-
-        Fragment fragment = SummaryFragment.newInstance(mArticle);
-        tab.setTag(fragment);
-        ab.addTab(tab, true);
-
-        for (Article.Column column : mArticle.getColumns()) {
-            tab = ab.newTab()
-                    .setText(column.getTitle())
-                    .setTabListener(this);
-
-            fragment = ColumnFragment.newInstance(column);
-            tab.setTag(fragment);
-            ab.addTab(tab);
-        }
     }
 
     @Override
@@ -82,23 +68,21 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        Intent intent = new Intent();
+
         int id = item.getItemId();
         if (id == R.id.action_update) {
-            Intent intent = new Intent();
             intent.setClassName(getPackageName(), getPackageName() + ".ArticleUpdateActivity");
-            intent.putExtra(ArticleEditActivity.KEY_ARTICLE, mArticle);
-            startActivity(intent);
         } else if (id == R.id.action_replicate) {
-            Intent intent = new Intent();
             intent.setClassName(getPackageName(), getPackageName() + ".ArticleReplicateActivity");
-            intent.putExtra(ArticleEditActivity.KEY_ARTICLE, mArticle);
-            startActivity(intent);
         } else if (id == R.id.action_translate) {
-            Intent intent = new Intent();
             intent.setClassName(getPackageName(), getPackageName() + ".ArticleTranslateActivity");
-            intent.putExtra(ArticleEditActivity.KEY_ARTICLE, mArticle);
-            startActivity(intent);
         }
+
+        intent.putExtra(ArticleEditActivity.KEY_ARTICLE_ID, mArticle.getId());
+        startActivity(intent);
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -115,6 +99,93 @@ public class ArticleViewActivity extends ActionBarActivity implements ActionBar.
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    private static class ArticleLoader extends AsyncTaskLoader<Article> {
+        private long articleId;
+
+        public ArticleLoader(Context context, long articleId) {
+            super(context);
+            this.articleId = articleId;
+        }
+
+        @Override
+        public Article loadInBackground() {
+            Article article = new Article();
+            if (articleId > -1) {
+                SQLiteDatabase db = new DbManager(getContext(), DbManager.FILE_NAME, null)
+                        .getReadableDatabase();
+                article.findById(articleId, db);
+                db.close();
+            }
+            return article;
+        }
+
+    }
+
+    @Override
+    public android.support.v4.content.Loader<Article> onCreateLoader(int id, Bundle args) {
+        ArticleLoader loader = new ArticleLoader(this, args.getLong(KEY_ARTICLE_ID));
+        loader.forceLoad();
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(android.support.v4.content.Loader<Article> loader, Article data) {
+        mArticle = data;
+        sHandler.sendMessage(sHandler.obtainMessage(MyHandler.HANDLE_SETUP_ACTIONBAR, mArticle));
+    }
+
+    private static MyHandler sHandler;
+
+    private static class MyHandler extends Handler {
+        public static final int HANDLE_SETUP_ACTIONBAR = 0x01;
+
+        WeakReference<ArticleViewActivity> activity;
+
+        MyHandler(ArticleViewActivity activity) {
+            this.activity = new WeakReference<ArticleViewActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+                case HANDLE_SETUP_ACTIONBAR: {
+                    setupUi((Article) msg.obj);
+                    break;
+                }
+            }
+        }
+
+        private void setupUi(Article article) {
+            ActionBar ab = activity.get().getSupportActionBar();
+            ab.setTitle(article.getTitle());
+
+            ActionBar.Tab tab = ab.newTab()
+                    .setText(R.string.summary)
+                    .setTabListener(activity.get());
+
+            Fragment fragment = SummaryFragment.newInstance(article);
+            tab.setTag(fragment);
+            ab.addTab(tab, true);
+
+            for (Article.Column column : article.getColumns()) {
+                tab = ab.newTab()
+                        .setText(column.getTitle())
+                        .setTabListener(activity.get());
+
+                fragment = ColumnFragment.newInstance(column);
+                tab.setTag(fragment);
+                ab.addTab(tab);
+            }
+        }
+    }
+
+    @Override
+    public void onLoaderReset(android.support.v4.content.Loader<Article> loader) {
+        // do nothing
     }
 
     public static class SummaryFragment extends Fragment {

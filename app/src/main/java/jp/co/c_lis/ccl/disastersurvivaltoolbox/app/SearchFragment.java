@@ -26,7 +26,7 @@ import java.util.List;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.Article;
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.DisasterType;
 
-public class SearchFragment extends AbsFragment<SearchFragmentListener>
+public class SearchFragment extends AbsNavDrawerFragment<SearchFragment.SearchFragmentListener>
         implements AdapterView.OnItemClickListener,
         TextView.OnEditorActionListener,
         CompoundButton.OnCheckedChangeListener {
@@ -196,4 +196,9 @@ public class SearchFragment extends AbsFragment<SearchFragmentListener>
         };
         th.start();
     }
+
+    public interface SearchFragmentListener extends AbsNavDrawerFragment.IFragmentListener {
+        public void onArticleSelected(Article article);
+    }
+
 }

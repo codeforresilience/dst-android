@@ -17,7 +17,7 @@ import java.util.List;
 
 import jp.co.c_lis.ccl.disastersurvivaltoolbox.app.entity.History;
 
-public class HomeFragment extends AbsFragment<HomeFragmentListener>
+public class HomeFragment extends AbsNavDrawerFragment<HomeFragment.HomeFragmentListener>
         implements AdapterView.OnItemClickListener {
     private static final String TAG = "HomeFragment";
 
@@ -124,4 +124,7 @@ public class HomeFragment extends AbsFragment<HomeFragmentListener>
         return R.menu.home;
     }
 
+    public interface HomeFragmentListener extends AbsNavDrawerFragment.IFragmentListener {
+        public void onHistorySelected(History history);
+    }
 }
