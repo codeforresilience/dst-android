@@ -281,7 +281,11 @@ public class ArticleEditActivity extends ActionBarActivity implements
 
     @Override
     public Loader<Article> onCreateLoader(int id, Bundle args) {
-        ArticleLoader loader = new ArticleLoader(this, args.getLong(KEY_ARTICLE_ID));
+        long articleId = -1;
+        if (args != null) {
+            articleId = args.getLong(KEY_ARTICLE_ID);
+        }
+        ArticleLoader loader = new ArticleLoader(this, articleId);
         loader.forceLoad();
         return loader;
     }
