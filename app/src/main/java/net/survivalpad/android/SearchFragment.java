@@ -50,7 +50,6 @@ public class SearchFragment extends AbsNavDrawerFragment<SearchFragment.SearchFr
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_search, container, false);
         mListView = (ListView) rootView.findViewById(R.id.lv_main);
-        mListView.setAdapter(mArticleAdapter);
         mListView.setOnItemClickListener(this);
 
         View headerView = inflater.inflate(R.layout.search_header, null);
@@ -61,7 +60,10 @@ public class SearchFragment extends AbsNavDrawerFragment<SearchFragment.SearchFr
                 mSelectedDisasterType);
         GridView gridView = (GridView) headerView.findViewById(R.id.gv_disaster_types);
         gridView.setAdapter(mDisasterTypeAdapter);
+
+        // HeaderViewの設定はsetAdapterの前にする必要がある
         mListView.addHeaderView(headerView);
+        mListView.setAdapter(mArticleAdapter);
 
         return rootView;
     }
