@@ -22,6 +22,10 @@ import android.util.Log;
 
 import net.survivalpad.android.BuildConfig;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +44,7 @@ public class Article extends AbsData<Article> implements Serializable {
 
     private String title;
     private Author author;
-    private String abstaction;
+    private String abstraction;
     private String image;
 
     private final List<Column> columns = new ArrayList<Column>();
@@ -98,12 +102,12 @@ public class Article extends AbsData<Article> implements Serializable {
         this.author = author;
     }
 
-    public String getAbstaction() {
-        return abstaction;
+    public String getAbstraction() {
+        return abstraction;
     }
 
-    public void setAbstaction(String abstaction) {
-        this.abstaction = abstaction;
+    public void setAbstraction(String abstraction) {
+        this.abstraction = abstraction;
     }
 
     public String getImage() {
@@ -187,7 +191,7 @@ public class Article extends AbsData<Article> implements Serializable {
         values.put("title", title);
         values.put("language", language);
         values.put("author_id", author.getId());
-        values.put("abstraction", abstaction);
+        values.put("abstraction", abstraction);
         values.put("image_filename", image);
         values.put("like_count", likeCount);
         values.put("source", source);
@@ -247,6 +251,84 @@ public class Article extends AbsData<Article> implements Serializable {
     }
 
     @Override
+    public JSONObject write(JSONObject json) throws JSONException {
+        json.put("id", id);
+        json.put("parent_id", parentId);
+        json.put("language", language);
+        json.put("title", title);
+        json.put("abstraction", abstraction);
+
+        json.put("author_uuid", author.getUuid());
+        json.put("image_filename", image);
+        json.put("like_count", likeCount);
+
+        json.put("source", source);
+        json.put("source_url", sourceUrl);
+
+        json.put("created", created);
+        json.put("updated", updated);
+
+        JSONArray columnArray = new JSONArray();
+        for (Column col : columns) {
+            columnArray.put(col.write(new JSONObject()));
+        }
+        json.put("columns", columnArray);
+
+        JSONArray disasterTypeArray = new JSONArray();
+        for (DisasterType type : disasterTypes) {
+            disasterTypeArray.put(type.write(new JSONObject()));
+        }
+        json.put("disaster_types", disasterTypeArray);
+
+        return json;
+    }
+
+    @Override
+    public Article read(JSONObject json) throws JSONException {
+        parentId = json.getLong("parent_id");
+        language = json.getString("language");
+        title = json.getString("title");
+
+        if (json.has("abstraction")) {
+            abstraction = json.getString("abstraction");
+        }
+
+        author = new Author();
+        author.setUuid(json.getString("author_uuid"));
+
+        if (json.has("image_filename")) {
+            image = json.getString("image_filename");
+        }
+        likeCount = json.getInt("like_count");
+
+        if (json.has("source")) {
+            source = json.getString("source");
+        }
+        if (json.has("source_url")) {
+            sourceUrl = json.getString("source_url");
+        }
+
+        created = json.getLong("created");
+        created = json.getLong("updated");
+
+        JSONArray disasterTypeArray = json.getJSONArray("disaster_types");
+        int len = disasterTypeArray.length();
+        for (int i = 0; i < len; i++) {
+            JSONObject obj = disasterTypeArray.getJSONObject(i);
+            disasterTypes.add(new DisasterType().read(obj));
+        }
+
+        JSONArray columnArray = json.getJSONArray("columns");
+        len = columnArray.length();
+        for (int i = 0; i < len; i++) {
+            JSONObject obj = columnArray.getJSONObject(i);
+            columns.add(new Column().read(obj));
+        }
+
+        return this;
+    }
+
+    @Override
     public void read(Cursor cursor) {
         id = cursor.getLong(cursor.getColumnIndex("_id"));
         parentId = cursor.getLong(cursor.getColumnIndex("parent_id"));
@@ -257,7 +339,7 @@ public class Article extends AbsData<Article> implements Serializable {
         author = new Author();
         author.setId(authorId);
 
-        abstaction = cursor.getString(cursor.getColumnIndex("abstraction"));
+        abstraction = cursor.getString(cursor.getColumnIndex("abstraction"));
         image = cursor.getString(cursor.getColumnIndex("image_filename"));
         likeCount = cursor.getInt(cursor.getColumnIndex("like_count"));
 
@@ -446,6 +528,27 @@ public class Article extends AbsData<Article> implements Serializable {
             return new Column();
         }
 
+        @Override
+        public JSONObject write(JSONObject json) throws JSONException {
+            json.put("id", id);
+            json.put("article_id", articleId);
+            json.put("title", title);
+            json.put("description", description);
+            json.put("image_filename", image);
+            return json;
+        }
+
+        @Override
+        public Column read(JSONObject json) throws JSONException {
+            title = json.getString("title");
+            description = json.getString("description");
+
+            if (json.has("image_filename")) {
+                image = json.getString("image_filename");
+            }
+            return this;
+        }
+
         public void deleteByArticleId(long articleId, SQLiteDatabase db) {
             String table = getTableName();
             String selection = "article_id = ?";
@@ -506,6 +609,18 @@ public class Article extends AbsData<Article> implements Serializable {
         @Override
         ArticleDisasterType getInstance() {
             return new ArticleDisasterType();
+        }
+
+        @Override
+        public JSONObject write(JSONObject json) throws JSONException {
+            // do nothing
+            return null;
+        }
+
+        @Override
+        public ArticleDisasterType read(JSONObject json) throws JSONException {
+            // do nothing
+            return null;
         }
 
         public void deleteByArticleId(long articleId, SQLiteDatabase db) {

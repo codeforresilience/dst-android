@@ -18,14 +18,26 @@ package net.survivalpad.android.entity;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.Serializable;
 
 public class Author extends AbsData<Author> implements Serializable {
 
+    private String uuid;
     private String name;
     private String nameEn;
     private File image;
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 
     public String getName() {
         return name;
@@ -51,25 +63,6 @@ public class Author extends AbsData<Author> implements Serializable {
         this.image = image;
     }
 
-    public static Author getDummy(int id) {
-        switch (id) {
-            case 0:
-                Author author1 = new Author();
-                author1.setId(0);
-                author1.setName("執筆者名");
-                return author1;
-            case 1:
-                Author author2 = new Author();
-                author2.setId(1);
-                author2.setName("執筆者名2");
-                return author2;
-            default:
-                break;
-        }
-
-        return null;
-    }
-
     @Override
     public String getTableName() {
         return "authors";
@@ -79,6 +72,7 @@ public class Author extends AbsData<Author> implements Serializable {
     public String[] getAllColumns() {
         return new String[]{
                 "_id",
+                "uuid",
                 "name_ja",
                 "name_en",
                 "photo_filename",
@@ -87,6 +81,7 @@ public class Author extends AbsData<Author> implements Serializable {
 
     @Override
     public void write(ContentValues values) {
+        values.put("uuid", uuid);
         values.put("name_ja", name);
         values.put("name_en", nameEn);
 
@@ -98,6 +93,7 @@ public class Author extends AbsData<Author> implements Serializable {
     @Override
     public void read(Cursor cursor) {
         id = cursor.getLong(cursor.getColumnIndex("_id"));
+        uuid = cursor.getString(cursor.getColumnIndex("uuid"));
         name = cursor.getString(cursor.getColumnIndex("name_ja"));
         nameEn = cursor.getString(cursor.getColumnIndex("name_en"));
 
@@ -110,5 +106,21 @@ public class Author extends AbsData<Author> implements Serializable {
     @Override
     Author getInstance() {
         return new Author();
+    }
+
+    @Override
+    public JSONObject write(JSONObject json) throws JSONException {
+        json.put("uuid", uuid);
+        json.put("name", name);
+        json.put("name_en", nameEn);
+        return json;
+    }
+
+    @Override
+    public Author read(JSONObject json) throws JSONException {
+        uuid = json.getString("uuid");
+        name = json.getString("name");
+        nameEn = json.getString("name_en");
+        return this;
     }
 }

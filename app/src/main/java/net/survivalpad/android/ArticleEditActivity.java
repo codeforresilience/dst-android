@@ -282,7 +282,8 @@ public class ArticleEditActivity extends ActionBarActivity implements
                 && resultCode == RESULT_OK
                 && mEditorFragment != null) {
             final File tmp = new File(fileUri.getPath());
-            final File file = new File(getCacheDir(), tmp.getName());
+            final File file = new File(
+                    new File(FileUtils.getArticleDir(this), "images"), tmp.getName());
 
             Thread th = new Thread() {
                 @Override

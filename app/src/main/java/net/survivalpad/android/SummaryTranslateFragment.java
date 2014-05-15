@@ -36,6 +36,7 @@ import net.survivalpad.android.entity.Article;
 import net.survivalpad.android.entity.DisasterType;
 import net.survivalpad.android.entity.History;
 import net.survivalpad.android.util.DbManager;
+import net.survivalpad.android.util.FileUtils;
 
 import java.io.File;
 import java.util.Locale;
@@ -171,7 +172,7 @@ public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslat
         ImageButton image = (ImageButton) rootView.findViewById(R.id.ib_camera);
 
         EditText abstraction = (EditText) rootView.findViewById(R.id.et_description);
-        abstraction.setText(article.getAbstaction());
+        abstraction.setText(article.getAbstraction());
 
         EditText source = (EditText) rootView.findViewById(R.id.et_source);
         source.setText(article.getSource());
@@ -211,6 +212,7 @@ public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslat
 
 
         if (article.getImage() != null) {
+            File imageFile = FileUtils.getArticleImage(getActivity(), article.getImage());
             new ImageLoadTask() {
                 @Override
                 protected Bitmap doInBackground(Container... params) {
@@ -220,8 +222,7 @@ public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslat
                     return null;
                 }
 
-            }.execute(new ImageLoadTask.Container(image,
-                    new File(getActivity().getCacheDir(), article.getImage())));
+            }.execute(new ImageLoadTask.Container(image, imageFile));
 
             new ImageLoadTask() {
                 @Override
@@ -232,8 +233,7 @@ public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslat
                     return null;
                 }
 
-            }.execute(new ImageLoadTask.Container(image2,
-                    new File(getActivity().getCacheDir(), article.getImage())));
+            }.execute(new ImageLoadTask.Container(image2, imageFile));
         }
 
         return rootView;
@@ -247,7 +247,7 @@ public class SummaryTranslateFragment extends BaseEditorFragment<SummaryTranslat
     @Override
     public void publish() {
         article.setTitle(title2.getText().toString());
-        article.setAbstaction(abstraction2.getText().toString());
+        article.setAbstraction(abstraction2.getText().toString());
         article.setSource(source2.getText().toString());
         article.setSourceUrl(sourceUrl2.getText().toString());
 

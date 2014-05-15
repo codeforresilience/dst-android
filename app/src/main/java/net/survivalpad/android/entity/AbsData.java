@@ -19,6 +19,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -89,4 +92,7 @@ public abstract class AbsData<T extends AbsData> implements ISqlite, Serializabl
         return db.update(getTableName(), values, whereClause, whereArgs);
     }
 
+    public abstract JSONObject write(JSONObject json) throws JSONException;
+
+    public abstract T read(JSONObject json) throws JSONException;
 }

@@ -19,31 +19,32 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
-import android.widget.ToggleButton;
+import android.widget.TextView;
+
+import net.survivalpad.android.entity.DisasterType;
+import net.survivalpad.android.util.FileUtils;
+import net.survivalpad.android.util.Utils;
+import net.survivalpad.android.view.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.survivalpad.android.entity.DisasterType;
-import net.survivalpad.android.util.Utils;
-
-class DisasterTypeAdapter extends BaseAdapter implements CompoundButton.OnCheckedChangeListener {
+class DisasterTypeAdapter extends BaseAdapter implements ImageView.OnCheckedChangeListener {
 
     private final Context context;
-    private final CompoundButton.OnCheckedChangeListener onCheckedChangeListener;
+    private final ImageView.OnCheckedChangeListener onCheckedChangeListener;
 
     private final List<DisasterType> disasterTypeList;
     private List<DisasterType> selectedDisasterTypeList;
 
     DisasterTypeAdapter(Context context,
-                        CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+                        ImageView.OnCheckedChangeListener onCheckedChangeListener,
                         List<DisasterType> list) {
         this(context, onCheckedChangeListener, list, null);
     }
 
     DisasterTypeAdapter(Context context,
-                        CompoundButton.OnCheckedChangeListener onCheckedChangeListener,
+                        ImageView.OnCheckedChangeListener onCheckedChangeListener,
                         List<DisasterType> list,
                         List<DisasterType> selectedList) {
         this.context = context;
@@ -79,23 +80,20 @@ class DisasterTypeAdapter extends BaseAdapter implements CompoundButton.OnChecke
             convertView = View.inflate(context, R.layout.disaster_type, null);
         }
 
-        ToggleButton view = (ToggleButton) convertView;
-        view.setChecked(Utils.isSelected(selectedDisasterTypeList, type) != null);
+        ImageView icon = (ImageView) convertView.findViewById(R.id.iv_icon);
+        TextView label = (TextView) convertView.findViewById(R.id.tv_label);
 
-        // 上に画像を表示
-        view.setCompoundDrawablesWithIntrinsicBounds(0, type.getIcon(), 0, 0);
-        view.setTextOn(type.getNameEn());
-        view.setTextOff(type.getNameEn());
-        view.setText(type.getNameEn());
+        icon.setImageDrawable(FileUtils.getDisasterTypesDrawable(context, type));
+        label.setText(type.getName());
 
-        view.setOnCheckedChangeListener(this);
-        view.setTag(type);
+        icon.setOnCheckedChangeListener(this);
+        icon.setTag(type);
 
         return convertView;
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onCheckedChanged(ImageView buttonView, boolean isChecked) {
         DisasterType type = (DisasterType) buttonView.getTag();
         if (isChecked) {
             selectedDisasterTypeList.add(type);

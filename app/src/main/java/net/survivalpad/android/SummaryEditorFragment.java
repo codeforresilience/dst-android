@@ -26,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -37,8 +36,9 @@ import net.survivalpad.android.entity.Article;
 import net.survivalpad.android.entity.DisasterType;
 import net.survivalpad.android.entity.History;
 import net.survivalpad.android.util.DbManager;
+import net.survivalpad.android.util.FileUtils;
+import net.survivalpad.android.view.ImageView;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +48,7 @@ import java.util.Locale;
  */
 public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragment.Listener>
         implements View.OnClickListener,
-        CompoundButton.OnCheckedChangeListener,
+        ImageView.OnCheckedChangeListener,
         AdapterView.OnItemSelectedListener {
 
     private static final String KEY_ARTICLE = "article";
@@ -226,12 +226,12 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
                 }
 
             }.execute(new ImageLoadTask.Container(image,
-                    new File(getActivity().getCacheDir(), article.getImage())));
+                    FileUtils.getArticleImage(getActivity(), article.getImage())));
         }
         image.setOnClickListener(this);
 
         abstraction = (EditText) rootView.findViewById(R.id.et_description);
-        abstraction.setText(article.getAbstaction());
+        abstraction.setText(article.getAbstraction());
 
         source = (EditText) rootView.findViewById(R.id.et_source);
         sourceUrl = (EditText) rootView.findViewById(R.id.et_source_url);
@@ -250,7 +250,7 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
     @Override
     public void publish() {
         article.setTitle(title.getText().toString());
-        article.setAbstaction(abstraction.getText().toString());
+        article.setAbstraction(abstraction.getText().toString());
         article.setSource(source.getText().toString());
         article.setSourceUrl(sourceUrl.getText().toString());
 
@@ -267,8 +267,8 @@ public class SummaryEditorFragment extends BaseEditorFragment<SummaryEditorFragm
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        DisasterType type = (DisasterType) buttonView.getTag();
+    public void onCheckedChanged(ImageView view, boolean isChecked) {
+        DisasterType type = (DisasterType) view.getTag();
         if (isChecked) {
             article.getDisasterTypes().add(type);
         } else {

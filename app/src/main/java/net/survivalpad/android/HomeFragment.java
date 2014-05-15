@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.survivalpad.android.entity.History;
+import net.survivalpad.android.util.FileUtils;
 
 public class HomeFragment extends AbsNavDrawerFragment<HomeFragment.HomeFragmentListener>
         implements AdapterView.OnItemClickListener {
@@ -91,8 +92,8 @@ public class HomeFragment extends AbsNavDrawerFragment<HomeFragment.HomeFragment
             String imagePath = history.getArticle().getImage();
             if (imagePath != null) {
                 thumbnail.setVisibility(View.INVISIBLE);
-                File imageFile = new File(getActivity().getCacheDir(), imagePath);
 
+                File imageFile = FileUtils.getArticleImage(getActivity(), imagePath);
                 new ImageLoadTask().execute(new ImageLoadTask.Container(thumbnail, imageFile));
 
             } else {

@@ -1,6 +1,22 @@
-<ToggleButton xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="5dp"
-    android:textSize="9dp"
-    android:background="@null" />
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <net.survivalpad.android.view.ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:clickable="true" />
+
+    <TextView
+        android:id="@+id/tv_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingTop="5dp"
+        android:textSize="9dp" />
+
+</LinearLayout>

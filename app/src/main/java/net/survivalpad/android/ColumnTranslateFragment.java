@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import net.survivalpad.android.entity.Article;
+import net.survivalpad.android.util.FileUtils;
 
 import java.io.File;
 
@@ -108,6 +109,7 @@ public class ColumnTranslateFragment extends BaseEditorFragment<ColumnTranslateF
 
         // FIXME: 写真撮影後、タブを切り替えて戻ってくると、翻訳前の参考画像も撮影した画像に置き換わる
         if (column.getImage() != null) {
+            File imageFile = FileUtils.getArticleImage(getActivity(), column.getImage());
             new ImageLoadTask() {
                 @Override
                 protected Bitmap doInBackground(Container... params) {
@@ -116,7 +118,7 @@ public class ColumnTranslateFragment extends BaseEditorFragment<ColumnTranslateF
                     }
                     return null;
                 }
-            }.execute(new ImageLoadTask.Container(image, new File(getActivity().getCacheDir(), column.getImage())));
+            }.execute(new ImageLoadTask.Container(image, imageFile));
             new ImageLoadTask() {
                 @Override
                 protected Bitmap doInBackground(Container... params) {
@@ -125,7 +127,7 @@ public class ColumnTranslateFragment extends BaseEditorFragment<ColumnTranslateF
                     }
                     return null;
                 }
-            }.execute(new ImageLoadTask.Container(image2, new File(getActivity().getCacheDir(), column.getImage())));
+            }.execute(new ImageLoadTask.Container(image2, imageFile));
         }
 
         return rootView;

@@ -22,6 +22,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 import net.survivalpad.android.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -176,5 +179,17 @@ public class History extends AbsData<History> implements Serializable {
             history.getArticle().findById(history.getArticle().getId(), db);
             history.getAuthor().findById(history.getAuthor().getId(), db);
         }
+    }
+
+    @Override
+    public JSONObject write(JSONObject json) throws JSONException {
+        // do nothing
+        return null;
+    }
+
+    @Override
+    public History read(JSONObject json) throws JSONException {
+        // do nothing
+        return null;
     }
 }

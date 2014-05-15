@@ -36,6 +36,7 @@ import android.widget.TextView;
 
 import net.survivalpad.android.entity.Article;
 import net.survivalpad.android.entity.DisasterType;
+import net.survivalpad.android.util.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ import java.util.List;
 public class SearchFragment extends AbsNavDrawerFragment<SearchFragment.SearchFragmentListener>
         implements AdapterView.OnItemClickListener,
         TextView.OnEditorActionListener,
-        CompoundButton.OnCheckedChangeListener {
+        net.survivalpad.android.view.ImageView.OnCheckedChangeListener {
 
     public static SearchFragment newInstance() {
         SearchFragment fragment = new SearchFragment();
@@ -96,7 +97,8 @@ public class SearchFragment extends AbsNavDrawerFragment<SearchFragment.SearchFr
     }
 
     @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onCheckedChanged(net.survivalpad.android.view.ImageView buttonView,
+                                 boolean isChecked) {
         executeSearch();
     }
 
@@ -157,13 +159,13 @@ public class SearchFragment extends AbsNavDrawerFragment<SearchFragment.SearchFr
             title.setText(article.getTitle());
 
             TextView description = (TextView) convertView.findViewById(R.id.tv_description);
-            description.setText(article.getAbstaction());
+            description.setText(article.getAbstraction());
 
             final ImageView thumbnail = (ImageView) convertView.findViewById(R.id.iv_image);
             String imagePath = article.getImage();
             if (imagePath != null) {
                 thumbnail.setVisibility(View.INVISIBLE);
-                File imageFile = new File(getActivity().getCacheDir(), imagePath);
+                File imageFile = FileUtils.getArticleImage(getActivity(), imagePath);
 
                 new ImageLoadTask().execute(new ImageLoadTask.Container(thumbnail, imageFile));
 

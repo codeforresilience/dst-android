@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import net.survivalpad.android.entity.Article;
+import net.survivalpad.android.util.FileUtils;
 
 import java.io.File;
 
@@ -107,7 +108,7 @@ public class ColumnEditorFragment extends BaseEditorFragment<ColumnEditorFragmen
                     }
                     return null;
                 }
-            }.execute(new ImageLoadTask.Container(image, new File(getActivity().getCacheDir(), column.getImage())));
+            }.execute(new ImageLoadTask.Container(image, FileUtils.getArticleImage(getActivity(), column.getImage())));
         }
         image.setOnClickListener(this);
 

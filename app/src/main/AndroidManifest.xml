@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2014 Disaster Survival Toolbox Team.
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2014 Disaster Survival Toolbox Team.
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -17,6 +16,7 @@
     package="net.survivalpad.android">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -28,14 +28,19 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:name=".SplashActivity"
+            android:label="@string/app_name"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" />
         <activity
             android:name=".ArticleViewActivity"
             android:label="@string/app_name" />
@@ -46,21 +51,21 @@
 
         <activity-alias
             android:name=".ArticleUpdateActivity"
-            android:targetActivity=".ArticleEditActivity"
+            android:icon="@drawable/ic_update"
             android:label="@string/app_name"
-            android:icon="@drawable/ic_update" />
+            android:targetActivity=".ArticleEditActivity" />
 
         <activity-alias
             android:name=".ArticleReplicateActivity"
-            android:targetActivity=".ArticleEditActivity"
+            android:icon="@drawable/ic_replicate"
             android:label="@string/app_name"
-            android:icon="@drawable/ic_replicate" />
+            android:targetActivity=".ArticleEditActivity" />
 
         <activity-alias
             android:name=".ArticleTranslateActivity"
-            android:targetActivity=".ArticleEditActivity"
+            android:icon="@drawable/ic_translate"
             android:label="@string/app_name"
-            android:icon="@drawable/ic_translate" />
+            android:targetActivity=".ArticleEditActivity" />
 
     </application>
 

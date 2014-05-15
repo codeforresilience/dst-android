@@ -36,11 +36,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
-import java.lang.ref.WeakReference;
-
 import net.survivalpad.android.entity.Article;
 import net.survivalpad.android.util.DbManager;
+import net.survivalpad.android.util.FileUtils;
+
+import java.io.File;
+import java.lang.ref.WeakReference;
 
 public class ArticleViewActivity extends ActionBarActivity
         implements ActionBar.TabListener, LoaderManager.LoaderCallbacks<Article> {
@@ -228,14 +229,14 @@ public class ArticleViewActivity extends ActionBarActivity
             String imageFileName = article.getImage();
             if (imageFileName != null) {
                 image.setVisibility(View.INVISIBLE);
-                File imageFile = new File(getActivity().getCacheDir(), article.getImage());
+                File imageFile = FileUtils.getArticleImage(getActivity(), imageFileName);
                 new ImageLoadTask().execute(new ImageLoadTask.Container(image, imageFile));
             } else {
                 image.setVisibility(View.GONE);
             }
 
             TextView abstraction = (TextView) rootView.findViewById(R.id.tv_description);
-            abstraction.setText(article.getAbstaction());
+            abstraction.setText(article.getAbstraction());
 
             return rootView;
         }
@@ -274,7 +275,7 @@ public class ArticleViewActivity extends ActionBarActivity
             if (imageFileName != null) {
                 image.setVisibility(View.INVISIBLE);
 
-                File imageFile = new File(getActivity().getCacheDir(), column.getImage());
+                File imageFile = FileUtils.getArticleImage(getActivity(), column.getImage());
                 new ImageLoadTask().execute(new ImageLoadTask.Container(image, imageFile));
             } else {
                 image.setVisibility(View.GONE);

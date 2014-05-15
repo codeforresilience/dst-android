@@ -18,30 +18,21 @@ package net.survivalpad.android.entity;
 import android.content.ContentValues;
 import android.database.Cursor;
 
-import net.survivalpad.android.R;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 
 public class DisasterType extends AbsData<DisasterType> implements Serializable {
 
-    public static final DisasterType EARTHQUAKE = new DisasterType(
-            0, R.drawable.disaster_type_earthquake, "地震", "Earthquake");
-
-    public static final DisasterType TYPHOON = new DisasterType(
-            1, R.drawable.disaster_type_typhoon, "台風", "Typhoon");
-
-    public static final DisasterType SNOW = new DisasterType(
-            2, R.drawable.disaster_type_snow, "大雪", "Snow");
-
-    private int icon;
+    private String icon;
     private String name;
-    private String nameEn;
 
-    public int getIcon() {
+    public String getIcon() {
         return icon;
     }
 
-    public void setIcon(int icon) {
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 
@@ -53,22 +44,13 @@ public class DisasterType extends AbsData<DisasterType> implements Serializable 
         this.name = name;
     }
 
-    public String getNameEn() {
-        return nameEn;
-    }
-
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
-    }
-
     public DisasterType() {
     }
 
-    public DisasterType(long id, int icon, String name, String nameEn) {
+    public DisasterType(long id, String icon, String name) {
         this.id = id;
         this.icon = icon;
         this.name = name;
-        this.nameEn = nameEn;
     }
 
     @Override
@@ -80,29 +62,46 @@ public class DisasterType extends AbsData<DisasterType> implements Serializable 
     public String[] getAllColumns() {
         return new String[]{
                 "_id",
-                "name_ja",
-                "name_en",
+                "name",
                 "icon",
         };
     }
 
     @Override
     public void write(ContentValues values) {
-        values.put("name_ja", name);
-        values.put("name_en", nameEn);
+        values.put("name", name);
         values.put("icon", icon);
     }
 
     @Override
     public void read(Cursor cursor) {
         id = cursor.getLong(cursor.getColumnIndex("_id"));
-        name = cursor.getString(cursor.getColumnIndex("name_ja"));
-        nameEn = cursor.getString(cursor.getColumnIndex("name_en"));
-        icon = cursor.getInt(cursor.getColumnIndex("icon"));
+        name = cursor.getString(cursor.getColumnIndex("name"));
+        icon = cursor.getString(cursor.getColumnIndex("icon"));
     }
 
     @Override
     DisasterType getInstance() {
         return new DisasterType();
+    }
+
+    @Override
+    public JSONObject write(JSONObject json) throws JSONException {
+        json.put("id", id);
+        json.put("name", name);
+        json.put("icon", icon);
+        return json;
+    }
+
+    @Override
+    public DisasterType read(JSONObject json) throws JSONException {
+        id = json.getLong("id");
+        if (json.has("name")) {
+            name = json.getString("name");
+        }
+        if (json.has("icon")) {
+            icon = json.getString("icon");
+        }
+        return this;
     }
 }
