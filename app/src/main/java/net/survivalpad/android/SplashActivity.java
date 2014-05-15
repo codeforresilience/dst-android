@@ -91,6 +91,11 @@ public class SplashActivity extends FragmentActivity implements ProgressMonitor 
                                 .call();
                     }
 
+                    if (!isFinishing()) {
+                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+
                 } catch (IOException e) {
                     Log.e(TAG, "IOException", e);
                 } catch (InvalidRemoteException e) {
@@ -157,10 +162,6 @@ public class SplashActivity extends FragmentActivity implements ProgressMonitor 
 
     @Override
     public void endTask() {
-        if (!isFinishing()) {
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
     }
 
     @Override
